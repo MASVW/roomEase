@@ -54,14 +54,9 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-//            ->topNavigation(true)
             ->authMiddleware([
                 Authenticate::class,
-            ]);
-//            ->sidebarFullyCollapsibleOnDesktop();
-//            ->renderHook(
-//            PanelsRenderHook::SIDEBAR_NAV_START,
-//                    fn (): string => \Illuminate\Support\Facades\Blade::render('@livewire(\App\Livewire\DatePicker::class)'),
-//            );
+            ])
+            ->sidebarFullyCollapsibleOnDesktop();
     }
 }

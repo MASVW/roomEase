@@ -9,7 +9,11 @@
 
         <!-- Calendar Section -->
         <div class="flex-grow">
-            <div id="calendar" wire:ignore></div>
+            <x-filament::section class=",">
+                <div class="w-4/5 mx-auto">
+                    <div id="calendar"></div>
+                </div>
+            </x-filament::section>
         </div>
     </div>
 
@@ -24,13 +28,13 @@
             let calendar = new Calendar(calendarEl, {
                 plugins: [dayGridPlugin, timeGridPlugin, listPlugin, multiMonthPlugin],
                 initialView: 'dayGridMonth',
+
                 headerToolbar: {
                     left: 'prev,next',
                     center: 'title',
                     right: 'multiMonth,dayGridMonth,timeGridWeek,listWeek'
                 },
-                hiddenDays: [6, 7],
-                aspectRatio: 1, // Optional
+                hiddenDays: [6, 0],
                 events: @json($this->data),
                 titleFormat: { year: 'numeric', month: 'long' },
                 buttonText: {
