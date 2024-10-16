@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->count(10)->create();
 
         $this->call([
+            RolePermissionSeeder::class,
             RoomSeeder::class,
             RequestRoomSeeder::class
         ]);

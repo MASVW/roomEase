@@ -10,6 +10,8 @@ class RequestRoom extends Model
 {
     /** @use HasFactory<\Database\Factories\RequestRoomFactory> */
     use HasFactory;
+
+    protected $table = "bookings";
     protected $fillable = [
         'title',
         "description",
@@ -19,6 +21,9 @@ class RequestRoom extends Model
         "user_id",
         "room_id"
     ];
+
+    protected $dates = ['start_time', 'end_time'];
+
     public $timestamps = true;
 
     public function user(): BelongsTo
