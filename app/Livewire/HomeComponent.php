@@ -26,12 +26,8 @@ class HomeComponent extends Component
 
     public function initDataRoom(): Collection
     {
-        return Room::all()->take(20);
+        return Room::limit(12)->get();
     }
-
-
-
-
     public function storeData($data): void
     {
         foreach($data as $item)

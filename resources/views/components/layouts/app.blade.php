@@ -9,6 +9,7 @@
     <body>
         <livewire:nav-component />
         {{ $slot }}
+        <livewire:footer-component />
         @stack('scripts')
         @livewireScripts
     </body>
