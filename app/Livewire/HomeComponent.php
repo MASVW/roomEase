@@ -26,7 +26,7 @@ class HomeComponent extends Component
 
     public function initDataRoom(): Collection
     {
-        return Room::all()->take(5);
+        return Room::all()->take(20);
     }
 
 
