@@ -7,26 +7,35 @@ use Livewire\Component;
 class NavComponent extends Component
 {
     public $menu = "";
+    public $title = "";
     public function mount()
     {
         $menu = session()->get('menu');
         if (is_null($menu))
         {
-            $this->menu = "Home";
+            $this->title == "" ? $this->menu = "Home" : $this->menu = $this->title ;
         }
-        else { $this->menu = $menu; }
+        else {
+            $this->title = $menu;
+            $this->menu = $menu;
+        }
     }
 
     public function redirectHome()
     {
-        session()->flash('menu', 'Home');
+        session()->put('menu', 'Home');
         return redirect('/');
     }
 
     public function redirectMyApplication()
     {
-        session()->flash('menu', 'My Application');
+        session()->put('menu', 'My Application');
         return redirect('/');
+    }
+    public function redirectDocumentation()
+    {
+        session()->put('menu', 'Documentation');
+        return redirect('/how-to-book');
     }
 
     public function render()

@@ -1,10 +1,8 @@
 <div>
-    <livewire:welcome-component />
 
+    <livewire:header-component />
 
     <livewire:room-list-component :$room/>
-
-    <livewire:room-insight-component :$room :$data/>
 
 </div>
 

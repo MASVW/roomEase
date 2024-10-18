@@ -7,10 +7,9 @@ use App\Models\Room;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
-class HomeComponent extends Component
+class HowToBookPage extends Component
 {
     public $data = [];
-
     public $room;
 
     public function mount(): void
@@ -26,7 +25,7 @@ class HomeComponent extends Component
 
     public function initDataRoom(): Collection
     {
-        return Room::limit(12)->get();
+        return Room::limit(5)->get();
     }
     public function storeData($data): void
     {
@@ -39,8 +38,9 @@ class HomeComponent extends Component
             ];
         }
     }
+
     public function render()
     {
-        return view('livewire.home-component');
+        return view('livewire.how-to-book-page');
     }
 }

@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 
-class RoomInsightComponent extends Component
+class DocumentationComponent extends Component
 {
     public $room;
     public $data;
@@ -15,6 +15,6 @@ class RoomInsightComponent extends Component
     }
     public function render()
     {
-        return view('livewire.room-insight-component');
+        return view('livewire.documentation-component');
     }
 }
