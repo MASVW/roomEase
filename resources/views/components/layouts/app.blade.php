@@ -8,6 +8,8 @@
     </head>
     <body>
         <livewire:nav-component />
+
+        <livewire:search-section />
         {{ $slot }}
         <livewire:footer-component />
         @stack('scripts')

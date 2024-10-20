@@ -1,4 +1,4 @@
-<section class="py-8 antialiased dark:bg-gray-900 md:py-16">
+<section class="py-4 antialiased dark:bg-gray-900 md:py-4">
     <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <div class="grid gap-x-2 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4">
             <div class="hidden xl:block">
