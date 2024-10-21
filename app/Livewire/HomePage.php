@@ -17,8 +17,8 @@ class HomePage extends Component
 
     public function mount(): void
     {
-        $initData = $this->initDataCalendar();
         $this->room = $this->initDataRoom();
+        $initData = $this->initDataCalendar();
         $this->storeData($initData);
     }
     public function initDataCalendar(): Collection

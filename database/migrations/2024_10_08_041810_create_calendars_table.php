@@ -19,6 +19,7 @@ return new class extends Migration
             $table->dateTime('end');
 
             $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
+            $table->foreignId('room_id')->references('id')->on('rooms')->onDelete('cascade');
 
             $table->timestamps();
         });

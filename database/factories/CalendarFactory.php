@@ -30,6 +30,7 @@ class CalendarFactory extends Factory
             "event_title" => $this->faker->word(),
             "start" => $startTime,
             "end" => $endTime,
+            "room_id" => rand(1,40)
         ];
     }
 }

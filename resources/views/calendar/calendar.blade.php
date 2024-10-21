@@ -1,5 +1,5 @@
-@vite(['resources/css/app.css','resources/js/app.js'])
-
+{{--@vite(['resources/css/app.css','resources/js/app.js'])--}}
+{{--@extends('layouts.app')--}}
 <x-filament-panels::page>
     <div class="flex">
         <!-- SumarizeEvent Section: Hidden on md, Visible on xl -->

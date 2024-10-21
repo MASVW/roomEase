@@ -10,7 +10,12 @@ class Calendar extends Model
 {
     /** @use HasFactory<\Database\Factories\CalendarFactory> */
     use HasFactory;
+    protected $table = "calendars";
     protected $guarded = [];
+
+    protected $dates = ['start', 'end'];
+
+    public $timestamps = true;
     public function booking(): BelongsTo
     {
         return $this->belongsTo(RequestRoom::class);

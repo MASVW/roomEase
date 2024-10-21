@@ -86,4 +86,10 @@ return [
 
     'livewire_loading_delay' => 'default',
 
+    'panels' => [
+        'default' => [
+            'layout' => 'layouts.app', // Path ke layout custom Anda
+        ],
+    ],
+
 ];

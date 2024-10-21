@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,6 +15,9 @@ class RequestRoomSeeder extends Seeder
      */
     public function run(): void
     {
+        $startDate = Carbon::create(2024, 10, 1);
+        $endDate = Carbon::create(2024, 10, 31);
+
         $faker = Factory::create();
         $values = [];
         $status = ['pending', 'approved', 'rejected'];

@@ -17,8 +17,6 @@ class Room extends Model
 
     function booking(): HasMany
     {
-        return $this->hasMany(Request::class);
+        return $this->hasMany(RequestRoom::class);
     }
-
-
 }
