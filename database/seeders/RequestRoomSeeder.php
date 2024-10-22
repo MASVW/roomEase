@@ -15,14 +15,13 @@ class RequestRoomSeeder extends Seeder
      */
     public function run(): void
     {
-        $startDate = Carbon::create(2024, 10, 1);
-        $endDate = Carbon::create(2024, 10, 31);
+        $startDate = Carbon::create(2024, 10, rand(1,31));
 
         $faker = Factory::create();
         $values = [];
         $status = ['pending', 'approved', 'rejected'];
         for ($i = 0; $i < 10; $i++) {
-            $startTime = $faker->dateTime();
+            $startTime = $startDate;
             $endTime = $startTime->modify('+5 day');
 
             $values[] = [

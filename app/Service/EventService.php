@@ -38,7 +38,7 @@ class EventService
         return "No Ongoing Events";
     }
 
-    //FOR KEEP
+    //CODE BELLOW JUST FOR KEEP NO NEED TO TEST OR USE!
     /**
      * @param $id
      * @return string
