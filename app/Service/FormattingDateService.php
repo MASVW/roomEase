@@ -12,7 +12,7 @@ class FormattingDateService
     }
     public function formattingUsingSeparator($date): string
     {
-        return Carbon::parse($date)->format('d/m/Y');
+        return Carbon::parse($date)->format('Y-m-d\TH:i');;
     }
     public function formattingToString($date): string
     {

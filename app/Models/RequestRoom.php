@@ -11,18 +11,20 @@ class RequestRoom extends Model
     /** @use HasFactory<\Database\Factories\RequestRoomFactory> */
     use HasFactory;
 
-    protected $table = "bookings";
+    protected $table = 'bookings';
+
+
     protected $fillable = [
         'title',
         "description",
-        "start_time",
-        "end_time",
+        "start",
+        "end",
         "status",
         "user_id",
         "room_id"
     ];
 
-    protected $dates = ['start_time', 'end_time'];
+    protected $dates = ['start', 'end'];
 
     public $timestamps = true;
 

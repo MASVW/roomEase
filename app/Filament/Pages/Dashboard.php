@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Calendar;
+use App\Models\RequestRoom;
 use Illuminate\Support\Collection;
 
 class Dashboard extends \Filament\Pages\Dashboard
@@ -22,7 +23,7 @@ class Dashboard extends \Filament\Pages\Dashboard
         /**
          * TODO: Calendar is the model to store all approved booking
          **/
-        return Calendar::all();
+        return RequestRoom::all();
     }
 
     public function storeData($data): void
@@ -30,7 +31,7 @@ class Dashboard extends \Filament\Pages\Dashboard
         foreach($data as $item)
         {
             $this->data[] = [
-                'title' => $item->event_title,
+                'title' => $item->title,
                 'start' => $item->start,
                 'end' => $item->end,
             ];

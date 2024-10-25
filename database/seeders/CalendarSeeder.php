@@ -14,6 +14,16 @@ class CalendarSeeder extends Seeder
      */
     public function run(): void
     {
+        $approvedBookings = DB::table('bookings')->where('status', 'approved')->get();
 
+        foreach ($approvedBookings as $booking) {
+            DB::table('calendars')->insert([
+                "booking_id" => $booking->id,
+                "event_title" => $booking->title,
+                "start" => $booking->start,
+                "end" => $booking->end,
+                "room_id" => $booking->room_id,
+            ]);
+        }
     }
 }

@@ -10,7 +10,6 @@ import interactionPlugin from '@fullcalendar/interaction';
 
 import { DotLottie } from '@lottiefiles/dotlottie-web';
 
-
 window.Calendar = Calendar;
 window.dayGridPlugin = dayGridPlugin;
 window.timeGridPlugin = timeGridPlugin;

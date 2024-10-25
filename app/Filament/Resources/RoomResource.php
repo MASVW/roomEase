@@ -49,12 +49,12 @@ class RoomResource extends Resource
                     ->formatStateUsing(function($state){
                         $nextBooking = RequestRoom::where('room_id', $state)
                             ->where('status', 'approved')
-                            ->where('end_time', '>', Carbon::now())
-                            ->orderBy('end_time', 'asc')
+                            ->where('end', '>', Carbon::now())
+                            ->orderBy('end', 'asc')
                             ->first();
 
                         if ($nextBooking) {
-                            return "Booked At " . $nextBooking->end_time->format('d M');
+                            return "Booked At " . $nextBooking->end->format('d M');
                         }
 
                         return "Available";

@@ -16,25 +16,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('password')
-        ]);
-
-        User::factory()->count(10)->create();
-
         $this->call([
             RolePermissionSeeder::class,
+            UserSeeder::class,
             RoomSeeder::class,
-            RequestRoomSeeder::class
+            RequestRoomSeeder::class,
+            CalendarSeeder::class
         ]);
-
-        Calendar::factory()->count(20)->create();
     }
 }
