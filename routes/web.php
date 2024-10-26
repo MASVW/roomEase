@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', \App\Livewire\HomePage::class)->name('homePage');
+Route::get('/', \App\Livewire\HomePage::class)->name('homePage')->middleware('auth');
 Route::get('/how-to-book', \App\Livewire\HowToBookPage::class)->name('howToBook');
 Route::get('/application/{id}', \App\Livewire\ApplicationPage::class)->name('application');
 Route::get('/detail-room/{id}', \App\Livewire\DetailRoom::class)->name('detail-room');
