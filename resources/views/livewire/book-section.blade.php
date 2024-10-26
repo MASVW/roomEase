@@ -8,12 +8,12 @@
 
         <div class="space-y-4">
             <div class="mt-4 sm:items-center sm:gap-4 sm:flex">
-                <p class="text-2xl font-extrabold text-gray-900 sm:text-3xl dark:text-white">
+                <p class="text-2xl font-extrabold text-gray-900 sm:text-3xl">
                     ROOM {{$selectedRoom->name}}
                 </p>
             </div>
             <div>
-                <h1 class="text-xl font-semibold text-gray-900 dark:text-white capitalize">
+                <h1 class="text-xl font-semibold text-gray-900 capitalize">
                     {{$this->ongoingEvent($id)}}
                 </h1>
             </div>
@@ -35,16 +35,16 @@
             <livewire:modal-button />
         </div>
 
-        <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
+        <hr class="my-6 md:my-8 border-gray-200" />
 
 
-{{--        <p class="mb-6 text-gray-500 dark:textl-gray-400">--}}
+{{--        <p class="mb-6 text-gray-500">--}}
 {{--            Studio quality three mic array for crystal clear calls and voice--}}
 {{--            recordings. Six-speaker sound system for a remarkably robust and--}}
 {{--            high-quality audio experience. Up to 256GB of ultrafast SSD storage.--}}
 {{--        </p>--}}
 
-{{--        <p class="text-gray-500 dark:text-gray-400">--}}
+{{--        <p class="text-gray-500">--}}
 {{--            Two Thunderbolt USB 4 ports and up to two USB 3 ports. Ultrafast--}}
 {{--            Wi-Fi 6 and Bluetooth 5.0 wireless. Color matched Magic Mouse with--}}
 {{--            Magic Keyboard or Magic Keyboard with Touch ID.--}}

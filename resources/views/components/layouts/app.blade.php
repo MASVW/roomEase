@@ -15,9 +15,8 @@
         @vite('resources/css/app.css')
     </head>
     <body>
-        <livewire:nav-component />
-
-        <livewire:search-section />
+{{--        <livewire:nav-component />--}}
+        @include('navigation-menu')
         {{ $slot }}
         <livewire:footer-component />
         <livewire:notifications />

@@ -1,4 +1,5 @@
 <div>
+    <livewire:search-section />
 
     <livewire:header-component />
 

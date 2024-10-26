@@ -1,4 +1,4 @@
-<section class="py-8 antialiased dark:bg-gray-900 md:py-12">
+<section class="py-8 antialiased md:py-12">
     <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <div class="col-span-7" id="calendar" wire:ignore></div>
     </div>

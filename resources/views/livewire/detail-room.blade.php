@@ -1,4 +1,4 @@
-<section class="py-4 antialiased dark:bg-gray-900 md:py-4">
+<section class="py-4 antialiased md:py-4">
     <div class="max-w-screen-xl px-4 mx-auto 2xl:px-0 space-y-16">
         <livewire:book-section :$selectedRoom id="{{$roomId}}" />
 
