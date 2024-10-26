@@ -1,13 +1,7 @@
-<section class="py-4 antialiased dark:bg-gray-900 md:py-4">
-    <div class="max-w-screen-xl px-4 mx-auto 2xl:px-0 space-y-16">
-        <livewire:book-section :$selectedRoom id="{{$roomId}}" />
-
-        <livewire:overview-section :$selectedRoom />
+<section class="py-8 antialiased dark:bg-gray-900 md:py-12">
+    <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+        <div class="col-span-7" id="calendar" wire:ignore></div>
     </div>
-
-    <livewire:room-list-component :$room/>
-
-    <livewire:request-room-modal :roomId=$roomId />
 </section>
 
 @push('scripts')
@@ -16,17 +10,38 @@
             let calendarEl = document.getElementById('calendar');
             let calendar = new Calendar(calendarEl, {
                 plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
-                initialView: 'timeGridWeek',
+                initialView: 'dayGridMonth',
                 allDaySlot: false,
                 hiddenDays: [6, 0],
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'timeGridWeek,timeGridDay'
+                headerToolbar: function() {
+                    // Dynamically adjust header buttons based on screen width
+                    if (window.innerWidth < 768) {
+                        return {
+                            left: 'prev,next',
+                            center: 'title',
+                            right: 'listWeek'
+                        };
+                    } else {
+                        return {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                        };
+                    }
+                }(),
+                windowResize: function(view) {
+                    // Adjust view settings based on the new window size
+                    if (window.innerWidth < 768) {
+                        calendar.changeView('listWeek');
+                    } else if (window.innerWidth >= 768 && window.innerWidth < 1024) {
+                        calendar.changeView('timeGridWeek');
+                    } else {
+                        calendar.changeView('dayGridMonth');
+                    }
                 },
                 slotEventOverlap: true,
                 events: @json($this->data),
-                titleFormat: { year: 'numeric', month: 'long', day: 'numeric' },
+                titleFormat: { year: 'numeric', month: 'long' },
                 buttonText: {
                     month: 'Month',
                     week: 'Week',
@@ -46,10 +61,10 @@
                 selectOverlap: true,
                 unselectAuto: true,
                 select: function(info) {
-                    Livewire.dispatch('dateSelected', {data: info});
+                    Livewire.emit('dateSelected', info);
                 },
                 businessHours: {
-                    daysOfWeek: [1, 2, 3, 4, 5],
+                    daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
                     startTime: '09:00',
                     endTime: '21:00',
                 },
@@ -62,7 +77,11 @@
                 }
             });
             calendar.render();
+            // Adjust initial view based on initial screen size
+            if (window.innerWidth < 768) {
+                calendar.changeView('listWeek');
+            }
         });
     </script>
-@endpush
 
+@endpush

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('calendars', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('booking_id');
-            $table->string('event_title');
+            $table->string('title');
             $table->dateTime('start');
             $table->dateTime('end');
 

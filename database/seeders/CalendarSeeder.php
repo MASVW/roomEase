@@ -19,7 +19,7 @@ class CalendarSeeder extends Seeder
         foreach ($approvedBookings as $booking) {
             DB::table('calendars')->insert([
                 "booking_id" => $booking->id,
-                "event_title" => $booking->title,
+                "title" => $booking->title,
                 "start" => $booking->start,
                 "end" => $booking->end,
                 "room_id" => $booking->room_id,

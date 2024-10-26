@@ -1,4 +1,5 @@
 <div class="lg:grid lg:grid-cols-12 lg:gap-8 xl:gap-16">
+
     {{--CALENDAR--}}
     <div class="col-span-7" id="calendar" wire:ignore></div>
 
@@ -35,6 +36,7 @@
         </div>
 
         <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
+
 
 {{--        <p class="mb-6 text-gray-500 dark:textl-gray-400">--}}
 {{--            Studio quality three mic array for crystal clear calls and voice--}}

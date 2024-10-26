@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Calendar;
 use App\Models\RequestRoom;
 use App\Models\Room;
+use App\Service\CalendarService;
 use App\Service\EventService;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -21,43 +22,26 @@ class DetailRoom extends Component
 
     protected $listeners = ['roomRequestCreated' => 'refreshData'];
 
+    protected $service;
+
+    public function __construct()
+    {
+        $this->service = app(CalendarService::class);
+    }
+
     public function mount($id)
     {
         $this->roomId = $id;
-        $this->refreshData();
-    }
+        $this->data = $this->service->refreshDataCalendarSpecificRoom($this->roomId);
 
-    public function refreshData(): void
-    {
-        $initData = $this->initDataCalendar($this->roomId);
-        $this->storeData($initData);
-
-        $this->selectedRoom = Room::with('booking')->findOrFail($this->roomId);
         $this->room = $this->initDataRoom();
+        $this->selectedRoom = Room::with('booking')->findOrFail($this->roomId);
     }
 
     public function initDataRoom(): Collection
     {
-    return Room::limit(12)->get();
+        return Room::limit(12)->get();
     }
-    public function initDataCalendar($id): Collection
-    {
-        return RequestRoom::where('room_id', $id)->get();
-//        return Calendar::where('room_id', $id)->with('booking.user')->get();
-    }
-
-    public function storeData($data): void
-    {
-        foreach($data as $item)
-        {
-            $this->data[] = [
-                'title' => $item->title,
-                'start' => $item->start,
-                'end' => $item->end,
-            ];
-        }
-    }
-
     public function render()
     {
         return view('livewire.detail-room');

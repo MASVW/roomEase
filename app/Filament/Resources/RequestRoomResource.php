@@ -53,26 +53,30 @@ class RequestRoomResource extends Resource
                         "approved" => 'success',
                         "rejected" => 'danger'
                     })
-                    ->label('Status'),
-                Tables\Columns\TextColumn::make('end_time')
+                    ->label('Status')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('end')
                     ->label('Event Scheduled')
                     ->formatStateUsing(function ($record) {
-                        $start = Carbon::parse($record->start_time);
-                        $end = Carbon::parse($record->end_time);
-                        $duration = "";
-                        if ($start->diffInDays($end) == 0){
-                            $duration = '(' . $start->diffInHours($end) . ' Hours)';
+                        // Parsing tanggal awal dan akhir
+                        $start = Carbon::parse($record->start)->startOfDay();
+                        $end = Carbon::parse($record->end)->endOfDay();
+
+                        if ($start->isSameDay($end)) {
+                            $hours = Carbon::parse($record->start)->diffInHours($record->end);
+                            $duration = "($hours Hours)";
+                        } else {
+                            $startTime = Carbon::parse($record->start);
+                            $endTime = Carbon::parse($record->end);
+                            $days = $startTime->diffInDays($endTime) + 1;
+                            $formatted = number_format($days, 0);
+                            $duration = "({$formatted} Days)";
                         }
-                        else {
-                            $duration = '(' . $start->diffInDays($end) . ' Days)';
-                        }
-                        return $start->format('d M Y') . ' ' . $duration;
+
+                        // Tampilkan tanggal mulai dan durasi
+                        return  $start->format('d M Y') . ' ' . $duration;
                     })
                     ->sortable()
-
-//                Tables\Columns\TextColumn::make('end_time')
-//                    ->label('End Time')
-//                    ->date('d M Y')
             ])
             ->filters([
                 //
