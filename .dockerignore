@@ -1,0 +1,31 @@
+# Mengabaikan direktori node_modules dan vendor karena akan diinstal ulang dalam container
+/node_modules
+/vendor
+
+# Mengabaikan file konfigurasi lingkungan
+.env
+.env.*.local
+
+# Mengabaikan file log dan cache
+/storage/logs
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/views
+
+# Mengabaikan file sistem dan konfigurasi lainnya
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+README.md
+.idea
+.vscode
+*.swp
+
+# Mengabaikan file lain yang tidak diperlukan
+/tests
+/.github
+/public/storage
+/homestead.yaml
+/homestead.yml
+/.env.example
