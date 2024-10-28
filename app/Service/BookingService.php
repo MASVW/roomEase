@@ -152,6 +152,11 @@ class BookingService
         return $bookResult;
     }
 
+    public function listBooking()
+    {
+        return RequestRoom::with('room')->where('status', 'pending')->get();
+    }
+
     public function deleteBooking($id)
     {
         $deletedCount = 0;

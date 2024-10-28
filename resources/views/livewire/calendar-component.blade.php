@@ -1,8 +1,11 @@
-<section class="py-8 antialiased md:py-12">
-    <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
-        <div class="col-span-7" id="calendar" wire:ignore></div>
+<section class="flex items-center justify-center min-h-screen py-8 antialiased md:py-12">
+    <div class="max-w-4xl w-full">
+        <div class="mx-auto px-4 2xl:px-0">
+            <div class="col-span-7" id="calendar" wire:ignore></div>
+        </div>
     </div>
 </section>
+
 
 @push('scripts')
     <script>

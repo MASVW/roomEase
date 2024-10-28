@@ -1,4 +1,4 @@
-<section class="py-4 antialiased md:py-4 bg-gray-100">
+<section class="py-4 antialiased md:py-4 h-screen">
     <div class="mx-auto max-w-screen-xl px-4 2xl:px-0 space-y-4">
         <div>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -20,7 +20,7 @@
                             </div>
                             <div class="col-span-12 sm:col-span-3 md:col-span-3 text-center">
 {{--                                <p>13:00-17:00</p>--}}
-                                <p>{{$this->eventDuration($application->start, $application->end)}}</p>
+                                <p>{{$this->service->formattingToStringWithDuration($application->start, $application->end)}}</p>
                             </div>
                             <div class="col-span-12 sm:col-span-3 md:col-span-3 text-center">
                                 <p>{{$application->room->name}}</p>

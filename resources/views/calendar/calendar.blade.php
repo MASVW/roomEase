@@ -1,18 +1,18 @@
 @vite(['resources/css/app.css','resources/js/app.js'])
 {{--@extends('layouts.app')--}}
 <x-filament-panels::page>
-    <div class="flex">
-        <!-- SumarizeEvent Section: Hidden on md, Visible on xl -->
+    <div class="flex space-x-5">
         <div class="flex-1 hidden xl:block xl:flex">
-            <livewire:SumarizeEvent />
+            <livewire:EventWidget :$listBooking />
         </div>
 
         <!-- Calendar Section -->
-        <div class="flex-grow">
-            <x-filament::section class=",">
-                <div class="w-4/5 mx-auto">
-                    <div id="calendar" wire:ignore></div>
-                </div>
+        <div class="flex-grow h-full">
+            <x-filament::section >
+                <x-slot name="heading">
+                    Event Calendar (Has Approved)
+                </x-slot>
+                <div id="calendar" wire:ignore></div>
             </x-filament::section>
         </div>
     </div>

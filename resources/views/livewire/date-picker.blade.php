@@ -2,6 +2,16 @@
     <x-slot name="heading">
         Pick a Date
     </x-slot>
-    <div class="flex justify-center" id="datepicker-inline" inline-datepicker data-date="10/25/2024"></div>
+
+    <input type="text" data-picker>
 </x-filament::section>
+@script
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new Pikaday({
+            field: document.querySelector('[data-picker]')
+        });
+    });
+</script>
+@endscript
 

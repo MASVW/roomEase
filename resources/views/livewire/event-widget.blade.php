@@ -2,19 +2,20 @@
     <x-slot name="heading">
         Booking List
     </x-slot>
-    <div class="space-y-4">
-    @for($i = 0; $i <10; $i++)
+    <div class="space-y-4 max-h-[40rem] overflow-y-auto">
+    @forelse($listBooking as $item)
         <x-filament::section
             collapsible
             collapsed
         >
             <x-slot name="heading">
-                SGS | LP601
+                {{ \Illuminate\Support\Str::words($item->title, 3, '...') }} | {{ optional($item->room)->name ?? 'No Room' }}
             </x-slot>
-            <p>Welcoming New Student</p>
-            <p>LP601</p>
-            <p>14 Agustus 2024</p>
+            <p>{{$item->title}}</p>
+            <p>{{$item->room->name}}</p>
+            <p>{{$item->duration}}</p>
         </x-filament::section>
-    @endfor
+    @empty
+    @endforelse
     </div>
 </x-filament::section>
