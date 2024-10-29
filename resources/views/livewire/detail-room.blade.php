@@ -8,6 +8,7 @@
     <livewire:room-list-component :$room/>
 
     <livewire:request-room-modal :roomId=$roomId />
+    <livewire:detail-book-modal :roomId=$roomId />
 </section>
 
 @push('scripts')
@@ -54,11 +55,7 @@
                     endTime: '21:00',
                 },
                 eventClick: function(info) {
-                    alert('Event: ' + info.event.title);
-                    alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
-                    alert('View: ' + info.view.type);
-
-                    info.el.style.borderColor = 'red';
+                    Livewire.dispatch('eventSelected', {data: info});
                 }
             });
             calendar.render();

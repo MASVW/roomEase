@@ -55,11 +55,27 @@ class CalendarService
         foreach($data as $item)
         {
             $calendar[] = [
+                'id' => $item->id,
+                'user_id' => $item->user_id,
                 'title' => $item->title,
                 'start' => $item->start,
                 'end' => $item->end,
+                'color' => $this->getColorByStatus($item->status)
             ];
         }
         return $calendar;
+    }
+    private function getColorByStatus($status)
+    {
+        switch ($status) {
+            case 'approved':
+                return '#28a745';
+            case 'pending':
+                return '#ffc107';
+            case 'rejected':
+                return '#dc3545';
+            default:
+                return '#007bff';
+        }
     }
 }

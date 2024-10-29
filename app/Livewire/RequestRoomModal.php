@@ -27,7 +27,7 @@ class RequestRoomModal extends Component
 
     protected $listeners = [
         "showModal" => "toggleModal",
-        "dateSelected" => "dateSelected"
+        "dateSelected" => "dateSelected",
     ];
 
     protected $service;
