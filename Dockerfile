@@ -17,6 +17,7 @@ RUN docker-php-ext-install pdo_mysql zip intl
 RUN a2enmod rewrite
 
 ENV PORT 8080
+ENV SERVER_NAME roomease-819813528864.asia-southeast2.run.app
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf
@@ -27,6 +28,7 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 RUN echo "DirectoryIndex index.php index.html" >> /etc/apache2/apache2.conf
+RUN echo "ServerName ${SERVER_NAME}" >> /etc/apache2/apache2.conf
 
 # Install Node.js and npm (needed for Vite)
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
