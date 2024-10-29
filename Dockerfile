@@ -1,52 +1,33 @@
-ARG PHP_VERSION=8.2-apache
-FROM php:${PHP_VERSION} as php_laravel
+FROM php:8.2-apache
 
-# install dependencies for laravel 8
-RUN apt-get update && apt-get install -y \
-  curl \
-  git \
-  libicu-dev \
-  libpq-dev \
-  openssl \
-  unzip \
-  vim \
-  zip \
-  zlib1g-dev \
-  libpng-dev \
-  libzip-dev && \
-rm -r /var/lib/apt/lists/*
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    libzip-dev \
+    libicu-dev \
+    zip
 
-# install extension for laravel 8
-RUN docker-php-ext-install fileinfo exif pcntl bcmath gd pdo pdo_mysql && \
-  a2enmod rewrite
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql zip intl
 
-# install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+# Enable mod_rewrite
+RUN a2enmod rewrite
 
-FROM php_laravel as executeable
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-ENV APP_SOURCE /var/www/php
-ENV APP_DEBUG false
-ENV APP_URL ""
-ENV APP_ENV=production
+# Copy the application code
+COPY . /var/www/html
 
-# Set working directory
-WORKDIR $APP_SOURCE
+# Set the working directory
+WORKDIR /var/www/html
 
-# set DocumentRoot to lavavel framework uploaded
-RUN sed -i "s|DocumentRoot /var/www/html|DocumentRoot ${APP_SOURCE}/public|g" /etc/apache2/sites-enabled/000-default.conf
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# copy source laravel
-COPY . .
+# Install project dependencies
+RUN composer install
 
-# install dependency laravel
-RUN php -r "file_exists('.env') || copy('.env.example', '.env');" && \
-    composer install --no-interaction --optimize-autoloader --no-dev && \
-    php artisan package:discover --ansi && \
-    php artisan key:generate --ansi --force && \
-    php artisan optimize
-
-VOLUME ${APP_SOURCE}/storage
-
-# expose port default 80
-EXPOSE 80/tcp
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
