@@ -1,13 +1,21 @@
 #!/bin/bash
-# Exit on any error
-set -e
+echo "Script started."
+SECRET_NAME="nama_secret_env_anda"
+echo "Fetching secret named ${SECRET_NAME}."
 
-# Load the Secret Manager secret into an environment variable
-SECRET_NAME="uph-room-ease-config"
 gcloud secrets versions access latest --secret="${SECRET_NAME}" --format='get(payload.data)' | tr '_-' '/+' | base64 -d > /var/www/html/.env
+result=$?
+if [ $result -ne 0 ]; then
+    echo "Failed to fetch the secret."
+    exit $result
+else
+    echo "Secret successfully fetched and written to /var/www/html/.env."
+fi
 
-# Set file permissions for the .env file
 chown www-data:www-data /var/www/html/.env
+echo "Permissions set for .env file."
 
-# Execute the main command (CMD in Dockerfile)
+# Debug: Display the content of .env to ensure it's correct
+cat /var/www/html/.env
+
 exec "$@"
