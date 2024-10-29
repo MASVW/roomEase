@@ -17,7 +17,7 @@ RUN docker-php-ext-install pdo_mysql zip intl
 RUN a2enmod rewrite
 
 ENV PORT 8080
-ENV SERVER_NAME roomease-819813528864.asia-southeast2.run.app
+ENV SERVER_NAME roomease-819813528864.asia-southeast2.run.appasdjn
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf
