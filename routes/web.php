@@ -8,9 +8,3 @@ Route::middleware('auth')->group( function () {
     Route::get('/application/{id}', \App\Livewire\ApplicationPage::class)->name('application');
     Route::get('/detail-room/{id}', \App\Livewire\DetailRoom::class)->name('detail-room');
 });
-
-
-
-Route::get('/testing', function () {
-    return view('welcome');
-});
