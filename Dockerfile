@@ -60,4 +60,5 @@ RUN chmod +x /startup-script.sh
 # Expose the port
 EXPOSE ${PORT}
 
+ENTRYPOINT ["/startup-script.sh"]
 CMD ["apache2-foreground"]
