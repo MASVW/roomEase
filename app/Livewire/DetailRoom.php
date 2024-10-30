@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Calendar;
 use App\Models\RequestRoom;
 use App\Models\Room;
+use App\Service\BookingService;
 use App\Service\CalendarService;
 use App\Service\EventService;
 use Illuminate\Support\Collection;
@@ -23,6 +24,7 @@ class DetailRoom extends Component
     protected $listeners = ['roomRequestCreated' => 'refreshData'];
 
     protected $service;
+
 
     public function __construct()
     {

@@ -60,13 +60,13 @@ class UserSeeder extends Seeder
                 'model_id' => $userId,
             ]);
 
-            DB::table('teams')->insert([
-                'user_id' => $userId,
-                'name' => $account['nickname'] . "'s Team",
-                'personal_team' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+//            DB::table('teams')->insert([
+//                'user_id' => $userId,
+//                'name' => $account['nickname'] . "'s Team",
+//                'personal_team' => true,
+//                'created_at' => now(),
+//                'updated_at' => now(),
+//            ]);
 
         }
     }

@@ -4,25 +4,43 @@ namespace App\Livewire;
 
 use App\Models\RequestRoom;
 use App\Models\Room;
+use App\Service\BookingService;
 use App\Service\FormattingDateService;
 use Carbon\Carbon;
+use Filament\Notifications\Notification;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class ApplicationPage extends Component
 {
+    use WithPagination;
     public $userId;
-    public $listApplication;
-
     protected $service;
+    protected $bookingService;
+
+//    FOR EDIT
+    #[Validate('required|string|min:3|max:255|')]
+    public $eventName;
+    #[Validate('required|string|min:10|max:3000|')]
+    public $eventDescription;
+    #[Validate('required|date_format:Y-m-d\TH:i|before:end')]
+    public $start;
+    #[Validate('required|date_format:Y-m-d\TH:i|after:start')]
+    public $end;
+    public $bookingId;
+    public $agreement = true, $roomId, $status;
+    public $showModal = false;
+
     public function __construct()
     {
+        $this->bookingService = app(BookingService::class);
         $this->service = app(FormattingDateService::class);
     }
 
     public function mount($id)
     {
         $this->userId = $id;
-        $this->listApplication = RequestRoom::where('user_id', $this->userId)->with('room')->get();
     }
 
     public function eventDuration($eventStart, $eventEnd)
@@ -43,8 +61,90 @@ class ApplicationPage extends Component
         return  $start->format('d M Y') . ' ' . $duration;
     }
 
+    public function bookingSelected($id)
+    {
+        $data = [
+            'userId' => auth()->user()->id,
+            'eventId' => $id
+        ];
+        $this->dispatch('eventSelected', $data)->to(DetailBookModal::class);
+    }
+
+    public function editBooking($id)
+    {
+        $event = RequestRoom::findOrFail($id);
+        $this->bookingId = $event['id'];
+        $this->eventName = $event['title'];
+        $this->eventDescription = $event['description'];
+        $this->start = $event['start'];
+        $this->end = $event['end'];
+        $this->agreement = true;
+        $this->roomId = $event['room_id'];
+        $this->status = $event['status'];
+        $this->showModal = true;
+    }
+    public function updateBooking()
+    {
+        $this->validate();
+        $userId = auth()->user()->id;
+        $formatedStart = $this->service->formattingUsingSeparator($this->start);
+        $formatedEnd = $this->service->formattingUsingSeparator($this->end);
+        $process = $this->bookingService->editBooking(
+            $this->bookingId,
+            $this->eventName,
+            $this->eventDescription,
+            $formatedStart,
+            $formatedEnd,
+            $userId,
+            $this->roomId,
+            $this->status
+        );
+        if ($process)
+        {
+            $this->showModal = false;
+            return Notification::make()
+                ->title('Booking Successfully Updated')
+                ->body('Your booking has been successfully updated. Please check your account for the latest details. Thank you!')
+                ->success()
+                ->send();
+        }
+        $this->showModal = false;
+        return Notification::make()
+            ->title('Failed to Update Booking')
+            ->body('We’re sorry, but we couldn’t update your booking at this time. Please try again later or contact our support team for assistance.')
+            ->danger()
+            ->send();
+    }
+    public function delete($id)
+    {
+        $process = $this->bookingService->deleteBooking($id);
+        if ($process){
+            return Notification::make()
+                ->title('Booking Successfully Deleted')
+                ->body('Your booking has been successfully deleted. If you need further assistance, please contact our support team. Thank you!')
+                ->success()
+                ->send();
+        }
+        return Notification::make()
+            ->title('Booking Deletion Unsuccessful')
+            ->body('We’re sorry, but we couldn’t delete your booking at this time. Please try again later or contact our support team for assistance.')
+            ->danger()
+            ->send();
+    }
+
+    public function toggleModal(): void
+    {
+        $this->start = null;
+        $this->end = null;
+        $this->showModal = !$this->showModal;
+    }
+
     public function render()
     {
-        return view('livewire.application-page');
+        $listApplication = RequestRoom::where('user_id', $this->userId)
+            ->with('room')
+            ->paginate(10);
+
+        return view('livewire.application-page', ['listApplication' => $listApplication]);
     }
 }

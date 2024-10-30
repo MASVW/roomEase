@@ -48,12 +48,12 @@ class DetailBookModal extends Component
 
     public function eventSelected($data): void
     {
-        $this->status = $data['event']['extendedProps']['status'];
-        $userId = $data['event']['extendedProps']['user_id'];
+        $userId = $data['event']['extendedProps']['user_id'] ?? $data['userId'];
         $this->userNickname = User::findOrFail($userId)->nickname;
 
-        $eventId = $data['event']['id'];
+        $eventId = $data['event']['id'] ?? $data['eventId'];
         $event = RequestRoom::findOrFail($eventId);
+        $this->status = $event->status;
         $this->eventName = $event->title;
         $this->eventDescription = $event->description;
         $this->start = $event->start;

@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Support\Str;
 
 class TeamPolicy
 {
@@ -15,7 +16,7 @@ class TeamPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return Str::endsWith($user->email, '@uphroomease.com');
     }
 
     /**
@@ -31,7 +32,7 @@ class TeamPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return Str::endsWith($user->email, '@uphroomease.com');
     }
 
     /**
