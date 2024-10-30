@@ -1,36 +1,42 @@
 #!/bin/bash
 set -e  # Exit on error
 
+# Define the exact config paths based on your Cloud Run configuration
+CONFIG_FILE="/config/uph-room-ease-config"
+
+echo "Starting initialization..."
+echo "Checking for configuration file..."
+
 # Check if we have mounted secrets
-if [ -d "/config" ]; then
-    echo "Copying environment file from secrets..."
-    cp /config/.env /var/www/html/.env
+if [ -f "$CONFIG_FILE" ]; then
+    echo "Found configuration file at $CONFIG_FILE"
+    echo "Copying environment file to Laravel .env..."
+
+    # Copy the mounted secret to Laravel's .env
+    cp "$CONFIG_FILE" /var/www/html/.env
 
     # Set proper permissions
     chown www-data:www-data /var/www/html/.env
     chmod 640 /var/www/html/.env
+
+    echo "Environment file copied successfully"
 else
-    echo "Warning: /config directory not found. Make sure secrets are mounted correctly."
+    echo "Error: Configuration file not found at $CONFIG_FILE"
+    echo "Current contents of /config directory:"
+    ls -la /config || echo "Could not list /config directory"
     exit 1
 fi
 
-# Wait for the .env file to be available
-MAX_RETRIES=30
-RETRY_COUNT=0
-while [ ! -f /var/www/html/.env ] && [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    echo "Waiting for .env file to be available..."
-    sleep 1
-    RETRY_COUNT=$((RETRY_COUNT + 1))
-done
-
+# Verify the .env file exists and is readable
 if [ ! -f /var/www/html/.env ]; then
-    echo "Error: .env file not found after waiting. Exiting."
+    echo "Error: .env file was not created successfully"
     exit 1
 fi
 
 echo "Setting up Laravel application..."
 
 # Clear previous cache
+echo "Clearing existing cache..."
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
@@ -48,5 +54,5 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-echo "Starting Apache..."
+echo "Initialization complete. Starting Apache..."
 exec apache2-foreground
