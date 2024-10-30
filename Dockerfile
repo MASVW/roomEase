@@ -1,14 +1,15 @@
 FROM php:8.2-apache
 
 # Install dependencies
-RUN apt-get update && \
-    apt-get install -y \
+RUN apt-get update && apt-get install -y \
     libzip-dev \
     libicu-dev \
     zip \
     curl \
     git \
-    gnupg
+    gnupg \
+    nodejs \
+    npm
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql zip intl
@@ -16,22 +17,17 @@ RUN docker-php-ext-install pdo_mysql zip intl
 # Enable mod_rewrite
 RUN a2enmod rewrite
 
-ENV PORT 8080
-ENV SERVER_NAME roomease-819813528864.asia-southeast2.run.app
-
+ENV PORT=8080
+ENV SERVER_NAME=roomease-819813528864.asia-southeast2.run.app
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf
-RUN sed -i "s/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-available/000-default.conf
 
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+RUN sed -i "s/Listen 80/Listen ${PORT}/" /etc/apache2/ports.conf && \
+    sed -i "s/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-available/000-default.conf && \
+    sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
+    sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-RUN echo "DirectoryIndex index.php index.html" >> /etc/apache2/apache2.conf
-RUN echo "ServerName ${SERVER_NAME}" >> /etc/apache2/apache2.conf
-
-# Install Node.js and npm (needed for Vite)
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs
+RUN echo "DirectoryIndex index.php index.html" >> /etc/apache2/apache2.conf && \
+    echo "ServerName ${SERVER_NAME}" >> /etc/apache2/apache2.conf
 
 # Copy the application code
 COPY . /var/www/html
@@ -45,20 +41,32 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install project dependencies using Composer
 RUN composer install
 
+RUN php -r "file_exists('.env') || copy('.env.production', '.env');"
+
 # Install Node.js dependencies using npm
-RUN npm install
+RUN npm install && npm run build
 
-# Build assets using Vite
-RUN npm run build
+RUN mv /var/www/html/public/build/.vite/manifest.json /var/www/html/public/build/manifest.json
 
-# Set permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN find storage -type d -exec chmod 777 {} \; && \
+    find public/storage -type d -exec chmod 777 {} \;
 
-COPY startup-script.sh /startup-script.sh
-RUN chmod +x /startup-script.sh
+RUN php artisan storage:link && \
+    ln -s /var/www/html/public/build /var/www/html/build
+# 12. Optimasi konfigurasi Laravel
+RUN php artisan key:generate --ansi --force && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache && \
+    php artisan optimize
 
-# Expose the port
+# 13. Expose port untuk Cloud Run
 EXPOSE ${PORT}
 
-ENTRYPOINT ["/startup-script.sh"]
-CMD ["apache2-foreground"]
+# 14. Copy dan beri izin pada entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# 15. Jalankan aplikasi dengan entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
