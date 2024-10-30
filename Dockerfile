@@ -54,8 +54,8 @@ RUN npm run build
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-COPY startup-script.sh /startup-script.sh
-RUN chmod +x /startup-script.sh
+#COPY startup-script.sh /startup-script.sh
+RUN #chmod +x /startup-script.sh
 
 # Expose the port
 EXPOSE ${PORT}
