@@ -24,18 +24,3 @@ Route::middleware([
 Route::get('/testing', function () {
     return view('welcome');
 });
-
-//FOR TESTING
-Route::get('/env-check', function() {
-    $envPath = base_path('.env');
-    $output = [
-        'env_exists' => file_exists($envPath),
-        'env_size' => file_exists($envPath) ? filesize($envPath) : 0,
-        'env_readable' => file_exists($envPath) ? is_readable($envPath) : false,
-        'app_key' => env('APP_KEY', 'not-set'),
-        'app_env' => env('APP_ENV', 'not-set'),
-        'db_connection' => env('DB_CONNECTION', 'not-set'),
-    ];
-
-    return response()->json($output);
-});
