@@ -12,7 +12,7 @@
                 <x-slot name="heading">
                     Event Calendar (Has Approved)
                 </x-slot>
-                <div id="calendar" wire:ignore></div>
+            <div id="calendar" wire:ignore></div>
             </x-filament::section>
         </div>
     </div>

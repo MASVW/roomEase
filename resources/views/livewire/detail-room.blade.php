@@ -6,9 +6,9 @@
     </div>
 
     <livewire:room-list-component :$room/>
+    <livewire:detail-book-modal :roomId=$roomId />
 
     <livewire:request-room-modal :roomId=$roomId />
-    <livewire:detail-book-modal :roomId=$roomId />
 </section>
 
 @push('scripts')

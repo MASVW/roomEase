@@ -12,7 +12,11 @@
                 {{ \Illuminate\Support\Str::words($item->title, 3, '...') }} | {{ optional($item->room)->name ?? 'No Room' }}
             </x-slot>
             <p>{{$item->title}}</p>
-            <p>{{$item->room->name}}</p>
+            <p>
+                @foreach($item->rooms as $index => $room)
+                {{$room->name}}{{ $index < $item->rooms->count() - 1 ? ', ' : '' }}
+            @endforeach
+            </p>
             <p>{{$item->duration}}</p>
         </x-filament::section>
     @empty

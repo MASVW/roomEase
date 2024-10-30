@@ -65,7 +65,9 @@ class RequestRoomResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->weight(FontWeight::Bold)
                     ->label('Event Name')
-                    ->description(fn(RequestRoom $record):string => $record->description),
+                    ->description(fn(RequestRoom $record):string => $record->description)
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('user.nickname')
                     ->label('Nickname')
                     ->badge()
@@ -74,20 +76,11 @@ class RequestRoomResource extends Resource
                         'HMPSSI', 'HMPSIF', 'HMPSH',
                         'BEM', 'HMPSA', 'HMPSM'=> 'warning',
                         default => 'gray'
-                    })
+                    })->sortable()
                     ->alignCenter(),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->color(fn($state) => match ($state) {
-                        "pending" => 'gray',
-                        "approved" => 'success',
-                        "rejected" => 'danger'
-                    })
-                    ->label('Status')
-                    ->formatStateUsing(fn (string $state) => ucfirst($state))
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('end')
                     ->label('Event Scheduled')
+                    ->sortable()
                     ->formatStateUsing(function ($record) {
                         $start = Carbon::parse($record->start)->startOfDay();
                         $end = Carbon::parse($record->end)->endOfDay();
@@ -103,8 +96,19 @@ class RequestRoomResource extends Resource
                             $duration = "({$formatted} Days)";
                         }
                         return  $start->format('d M Y') . ' ' . $duration;
-                    })
-                    ->sortable()
+                    }),
+                    Tables\Columns\TextColumn::make('status')
+                        ->badge()
+                        ->color(fn($state) => match ($state) {
+                            "pending" => 'warning',
+                            "approved" => 'success',
+                            "rejected" => 'danger',
+                            default => 'gray'
+                        })
+                        ->label('Status')
+                        ->formatStateUsing(fn (string $state) => ucfirst($state))
+                        ->sortable()
+                        ->searchable()
             ])
             ->filters([
                 //
@@ -148,8 +152,23 @@ class RequestRoomResource extends Resource
                 ])->columnSpanFull(),
                 \Filament\Infolists\Components\Group::make([
                     Actions::make([
+                        Actions\Action::make('Reject')
+                            ->color('danger')
+                            ->visible(function (RequestRoom $record) {
+                                return $record->status === 'pending';})
+                            ->action(function (RequestRoom $record) {
+                                $record->status = 'rejected';
+                                $record->save();
+                                Notification::make()
+                                    ->title('Successfully  Rejected')
+                                    ->success()
+                                    ->body('Request status set to rejected.')
+                                    ->send();
+                            }),
                         Actions\Action::make('Approve')
-                            ->color('success')
+                            ->color('warning')
+                            ->visible(function (RequestRoom $record) {
+                                return $record->status === 'pending';})
                             ->action(function (RequestRoom $record) {
                                 $record->status = 'approved';
                                 $record->save();
@@ -163,7 +182,6 @@ class RequestRoomResource extends Resource
                                 } else {
                                     $record->status = 'approved';
                                     $record->save();
-
                                     Notification::make()
                                         ->title('Successfully Approved')
                                         ->success()
@@ -171,33 +189,24 @@ class RequestRoomResource extends Resource
                                         ->send();
                                 }
                             }),
-                        Actions\Action::make('Reject')
-                            ->color('danger')
-                            ->action(function (RequestRoom $record) {
-                                $record->status = 'rejected';
-                                $record->save();
-                                Notification::make()
-                                    ->title('Successfully  Rejected')
-                                    ->success()
-                                    ->body('Request status set to rejected.')
-                                    ->send();
-                            }),
                     ])->fullWidth()->columns(2)
                 ])->columns(2),
             ]);
     }
     static function createCalendar($booking)
     {
-        $calendarItem = [
-            'booking_id' => $booking['id'],
-            'title' => $booking['title'],
-            'start' => $booking['start'],
-            'end' => $booking['end'],
-            'room_id' => $booking['room_id'],
-        ];
         try {
-            DB::transaction(function () use ($calendarItem) {
-                Calendar::create($calendarItem);
+            DB::transaction(function () use ($booking) {
+                foreach ($booking->rooms as $room) {
+                    $calendarItem = [
+                        'booking_id' => $booking->id,
+                        'title' => $booking->title,
+                        'start' => $booking->start,
+                        'end' => $booking->end,
+                        'room_id' => $room->id,
+                    ];
+                    Calendar::create($calendarItem);
+                }
             });
             return null;
         } catch (\Exception $e) {

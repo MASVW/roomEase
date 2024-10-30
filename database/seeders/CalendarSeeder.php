@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\RequestRoom;
 use Faker\Factory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,16 +15,18 @@ class CalendarSeeder extends Seeder
      */
     public function run(): void
     {
-        $approvedBookings = DB::table('bookings')->where('status', 'approved')->get();
+        $approvedBookings = RequestRoom::with('rooms')->where('status', 'approved')->get();
 
         foreach ($approvedBookings as $booking) {
-            DB::table('calendars')->insert([
-                "booking_id" => $booking->id,
-                "title" => $booking->title,
-                "start" => $booking->start,
-                "end" => $booking->end,
-                "room_id" => $booking->room_id,
-            ]);
+            foreach ($booking->rooms as $room) {
+                DB::table('calendars')->insert([
+                    "booking_id" => $booking->id,
+                    "title" => $booking->title,
+                    "start" => $booking->start,
+                    "end" => $booking->end,
+                    "room_id" => $room->id,
+                ]);
+            }
         }
     }
 }

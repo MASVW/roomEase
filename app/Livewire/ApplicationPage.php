@@ -29,8 +29,15 @@ class ApplicationPage extends Component
     #[Validate('required|date_format:Y-m-d\TH:i|after:start')]
     public $end;
     public $bookingId;
-    public $agreement = true, $roomId, $status;
+    #[Validate('required|accepted')]
+    public $agreement = true;
+    public $roomId =[];
+    public $status;
     public $showModal = false;
+    public $modalDeletion = false;
+    public $modalCancel = false;
+
+    public $bookIdSelected;
 
     public function __construct()
     {
@@ -73,13 +80,16 @@ class ApplicationPage extends Component
     public function editBooking($id)
     {
         $event = RequestRoom::findOrFail($id);
+        $roomIds = $event->rooms->pluck('id')->toArray();
         $this->bookingId = $event['id'];
         $this->eventName = $event['title'];
         $this->eventDescription = $event['description'];
-        $this->start = $event['start'];
-        $this->end = $event['end'];
+        $formatedStart = $this->service->formattingUsingSeparator($event['start']);
+        $formatedEnd = $this->service->formattingUsingSeparator($event['end']);
+        $this->start = $formatedStart;
+        $this->end = $formatedEnd;
         $this->agreement = true;
-        $this->roomId = $event['room_id'];
+        $this->roomId = $roomIds;
         $this->status = $event['status'];
         $this->showModal = true;
     }
@@ -115,16 +125,56 @@ class ApplicationPage extends Component
             ->danger()
             ->send();
     }
+
+    public function showModalConfirmDeletion($id)
+    {
+        $this->modalDeletion = !$this->modalDeletion;
+        if ($this->modalDeletion)
+        {
+            return $this->bookIdSelected = $id;
+        }
+        return $this->bookIdSelected = null;
+    }
+    public function showModalConfirmCancel($id)
+    {
+        $this->modalCancel = !$this->modalCancel;
+        if ($this->modalCancel)
+        {
+            return $this->bookIdSelected = $id;
+        }
+        return $this->bookIdSelected = null;
+    }
     public function delete($id)
     {
         $process = $this->bookingService->deleteBooking($id);
         if ($process){
+            $this->modalDeletion = !$this->modalDeletion;
             return Notification::make()
                 ->title('Booking Successfully Deleted')
                 ->body('Your booking has been successfully deleted. If you need further assistance, please contact our support team. Thank you!')
                 ->success()
                 ->send();
         }
+        $this->modalDeletion = !$this->modalDeletion;
+        return Notification::make()
+            ->title('Booking Deletion Unsuccessful')
+            ->body('We’re sorry, but we couldn’t delete your booking at this time. Please try again later or contact our support team for assistance.')
+            ->danger()
+            ->send();
+    }
+
+    public function cancelBooking($id)
+    {
+        $process = $this->bookingService->cancelBooking($id);
+        if ($process){
+            $this->modalCancel = !$this->modalCancel;
+            return Notification::make()
+                ->title('Booking Successfully Deleted')
+                ->body('Your booking has been successfully deleted. If you need further assistance, please contact our support team. Thank you!')
+                ->success()
+                ->send();
+        }
+        $this->modalCancel = !$this->modalCancel;
         return Notification::make()
             ->title('Booking Deletion Unsuccessful')
             ->body('We’re sorry, but we couldn’t delete your booking at this time. Please try again later or contact our support team for assistance.')
@@ -142,7 +192,7 @@ class ApplicationPage extends Component
     public function render()
     {
         $listApplication = RequestRoom::where('user_id', $this->userId)
-            ->with('room')
+            ->with('rooms')
             ->paginate(10);
 
         return view('livewire.application-page', ['listApplication' => $listApplication]);

@@ -2,11 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Models\RequestRoom;
+use App\Models\User;
 use Carbon\Carbon;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\RequestRoomSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use PHPUnit\Logging\Exception;
 use Ramsey\Collection\Collection;
 use Tests\TestCase;
@@ -21,6 +25,13 @@ class BookingServiceTest extends TestCase
     {
         parent::setUp();
         $this->artisan('migrate:fresh');
+
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+            'password' => Hash::make('password')
+        ]);
+
+        Auth::login($user);
     }
     public function testCreateNewBooking()
     {
@@ -32,15 +43,17 @@ class BookingServiceTest extends TestCase
         $end = $start->copy()->addDays(5);
         $formattedStart = $start->format('Y-m-d\TH:i');
         $formattedEnd = $end->format('Y-m-d\TH:i');
-        $aggrement = true;
+        $agreement = true;
+        $userId = auth()->id();
         $userId = 1;
-        $roomId = 1;
+        $roomIds = [1, 2];
 
         $service = new \App\Service\BookingService();
-        $booking = $service->createBooking($eventName, $eventDescription, $formattedStart, $formattedEnd, $aggrement, $userId, $roomId);
+        $booking = $service->createBooking($eventName, $eventDescription, $formattedStart, $formattedEnd, $agreement, $userId, $roomIds);
 
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Model::class, $booking);
+        $this->assertInstanceOf(RequestRoom::class, $booking);
         $this->assertEquals("Welcoming New Test", $booking->title);
+        $this->assertCount(2, $booking->rooms);
     }
 
     public function testViewBooking()
@@ -53,17 +66,19 @@ class BookingServiceTest extends TestCase
         $end = $start->copy()->addDays(5);
         $formattedStart = $start->format('Y-m-d\TH:i');
         $formattedEnd = $end->format('Y-m-d\TH:i');
-        $aggrement = true;
+        $agreement = true;
+        $userId = auth()->id();
         $userId = 1;
-        $roomId = 1;
+        $roomIds = [1, 2];
 
         $service = new \App\Service\BookingService();
-        $booking = $service->createBooking($eventName, $eventDescription, $formattedStart, $formattedEnd, $aggrement, $userId, $roomId);
+        $booking = $service->createBooking($eventName, $eventDescription, $formattedStart, $formattedEnd, $agreement, $userId, $roomIds);
 
         $viewBooking = $service->viewBooking($booking->id);
 
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Model::class, $viewBooking);
+        $this->assertInstanceOf(RequestRoom::class, $viewBooking);
         $this->assertEquals("Welcoming New Test", $viewBooking->title);
+        $this->assertCount(2, $viewBooking->rooms); // Check the rooms are correctly attached
     }
 
     public function testDeleteBooking()
@@ -76,16 +91,17 @@ class BookingServiceTest extends TestCase
         $end = $start->copy()->addDays(5);
         $formattedStart = $start->format('Y-m-d\TH:i');
         $formattedEnd = $end->format('Y-m-d\TH:i');
-        $aggrement = true;
+        $agreement = true;
+        $userId = auth()->id();
         $userId = 1;
-        $roomId = 1;
+        $roomIds = [1, 2];
 
         $service = new \App\Service\BookingService();
-        $booking = $service->createBooking($eventName, $eventDescription, $formattedStart, $formattedEnd, $aggrement, $userId, $roomId);
+        $booking = $service->createBooking($eventName, $eventDescription, $formattedStart, $formattedEnd, $agreement, $userId, $roomIds);
 
-        $viewBooking = $service->deleteBooking($booking->id);
+        $deleteBooking = $service->deleteBooking($booking->id);
 
-        $this->assertEquals(true, $viewBooking);
+        $this->assertTrue($deleteBooking);
     }
 
 
@@ -100,21 +116,22 @@ class BookingServiceTest extends TestCase
         $end = $start->copy()->addDays(5);
         $formattedStart = $start->format('Y-m-d\TH:i');
         $formattedEnd = $end->format('Y-m-d\TH:i');
-        $aggrement = true;
+        $agreement = true;
+        $userId = auth()->id();
         $userId = 1;
-        $roomId = 1;
+        $roomIds = [1, 2];
 
         $service = new \App\Service\BookingService();
-        $booking = $service->createBooking($eventName, $eventDescription, $formattedStart, $formattedEnd, $aggrement, $userId, $roomId);
+        $booking = $service->createBooking($eventName, $eventDescription, $formattedStart, $formattedEnd, $agreement, $userId, $roomIds);
 
-        $updatedEventName = "Welcoming New Student";
-        $updatedEventDescription = "Welcoming New Student For 2025";
-        $updateBooking = $service->editBooking($booking->id, $updatedEventName, $updatedEventDescription, $formattedStart, $formattedEnd, $userId, $roomId, $status = "approved");
+        $updatedEventName = "Updated Welcoming Event";
+        $updatedEventDescription = "Updated description for the welcoming event.";
+        $updatedRoomIds = [2, 3];
+        $updateBooking = $service->editBooking($booking->id, $updatedEventName, $updatedEventDescription, $formattedStart, $formattedEnd, $userId, $updatedRoomIds, $status = "approved");
 
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Model::class, $updateBooking);
-        $this->assertEquals("Welcoming New Student", $updateBooking->title);
-        $this->assertEquals("Welcoming New Student For 2025", $updateBooking->description);
-        $this->assertEquals("approved", $updateBooking->status);
+        $this->assertInstanceOf(RequestRoom::class, $updateBooking);
+        $this->assertEquals("Updated Welcoming Event", $updateBooking->title);
+        $this->assertCount(2, $updateBooking->rooms);
     }
 
     public function testEditBookingWithInvalidData()
@@ -125,6 +142,8 @@ class BookingServiceTest extends TestCase
 
         $invalidId = 999;
         $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("The selected id is invalid.");
+
         $service->editBooking($invalidId, "Invalid Update", "Should fail");
     }
 }

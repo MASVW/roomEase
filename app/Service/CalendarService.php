@@ -34,7 +34,11 @@ class CalendarService
      */
     private function initDataCalendarSpecificRoom($roomId): Collection
     {
-        return RequestRoom::where('room_id', $roomId)->get();
+        return RequestRoom::whereHas('rooms', function ($query) use ($roomId) {
+            $query->where('id', $roomId);
+        })
+            ->with('rooms')
+            ->get();
     }
 
     /**

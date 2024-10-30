@@ -3,18 +3,17 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoomResource\Pages;
-use App\Filament\Resources\RoomResource\RelationManagers;
+use App\Filament\Resources\RoomResource\Tables\Actions\GenerateQrAction;
 use App\Models\RequestRoom;
 use App\Models\Room;
+use App\Service\QRService;
+use App\Tables\Columns\QRGenerator;
 use Carbon\Carbon;
-use Filament\Actions\DeleteAction;
-use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RoomResource extends Resource
 {
@@ -41,34 +40,47 @@ class RoomResource extends Resource
                 Tables\Columns\ImageColumn::make('img')
                     ->label('Image'),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Room Name'),
+                    ->label('Room Name')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('location')
-                    ->label('Location'),
+                    ->label('Location')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('id')
                 ->label('Status')
                     ->formatStateUsing(function($state){
-                        $nextBooking = RequestRoom::where('room_id', $state)
+                        $nextBooking = RequestRoom::whereHas('rooms', function($query) use ($state) {
+                            $query->where('rooms.id', $state);  // Assuming 'rooms' is the relationship name in RequestRoom model
+                        })
                             ->where('status', 'approved')
                             ->where('end', '>', Carbon::now())
                             ->orderBy('end', 'asc')
                             ->first();
 
                         if ($nextBooking) {
-                            return "Booked At " . $nextBooking->end->format('d M');
+                            $endDate = Carbon::parse($nextBooking->end);
+                            return "Booked At " . $endDate->format('d M');
                         }
 
                         return "Available";
-                    })
+                    }),
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('generateQr')
+                    ->hiddenLabel()
+                    ->icon('heroicon-o-qr-code')
+                    ->url(fn($record) => route('rooms.downloadQr', ['id' => $record->id]))
+                    ->openUrlInNewTab(false),
                 Tables\Actions\EditAction::make()
                     ->hiddenLabel(),
                 Tables\Actions\DeleteAction::make()
                     ->hiddenLabel(),
-            ]);
+            ])
+            ->defaultSort('name');
     }
 
     public static function getRelations(): array
@@ -76,6 +88,11 @@ class RoomResource extends Resource
         return [
             //
         ];
+    }
+
+    public function text()
+    {
+        return redirect("/");
     }
 
     public static function getPages(): array

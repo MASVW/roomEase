@@ -64,10 +64,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="grid gap-4 mb-4 grid-cols-1">
+                    <div class="grid gap-4 mb-4 grid-cols-2">
                         <div>
                             <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Requested By {{$userNickname}} at {{$this->service->formatDate->formattingDate($requestDate)}}</label>
                         </div>
+                        @if($this->status != "pending")
+                            <div>
+                                <label for="name" class="block mb-2 text-sm font-medium text-gray-900 capitalize">{{$this->status}} at {{$this->service->formatDate->formattingUsingTime($updatedDate)}}</label>
+                            </div>
+                        @endif
                     </div>
                     <div class="w-full flex justify-end">
                         <button type="submit" wire:click="toggleModal" class="text-white inline-flex items-center bg-sky-700 hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">

@@ -14,6 +14,10 @@ class FormattingDateService
     {
         return Carbon::parse($date)->format('Y-m-d\TH:i');
     }
+    public function formattingUsingTime($date): string
+    {
+        return Carbon::parse($date)->format('H:i, d F Y');
+    }
     public function formattingToString($date): string
     {
         return Carbon::parse($date)->toDateTimeString();

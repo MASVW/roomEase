@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Models\Calendar;
 use App\Models\RequestRoom;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
@@ -21,9 +22,36 @@ class BookingService
             throw new \Exception($validator->errors()->first());
         }
     }
-    public function createBooking($eventName, $eventDescription, $start, $end, $agreement, $userId, $roomId)
+
+    public function checkingEmail($email)
     {
+        $validEmails = [
+            'sl@uphroomease.com',
+            'ac@uphroomease.com',
+            'ga@uphroomease.com'
+        ];
+
+        if (in_array($email, $validEmails)) {
+        return true;
+        }
+
+        return false;
+    }
+
+    function convertToIntegerArray($input) {
+        if (is_int($input)) {
+            return [$input];
+        } elseif (is_string($input)) {
+            return array_map('intval', explode(',', $input));
+        } elseif (is_array($input))
+        return $input;
+    }
+
+    public function createBooking($eventName, $eventDescription, $start, $end, $agreement, $userId, $roomIds)
+    {
+        $status = $this->checkingEmail(auth()->user()->email) ? "approved" : "pending";
         $bookResult = null;
+        $formattedRoomId = $this->convertToIntegerArray($roomIds);
 
         $data = [
             'eventName' => $eventName,
@@ -32,7 +60,7 @@ class BookingService
             'end' => $end,
             'agreement' => $agreement,
             'userId' => $userId,
-            'roomId' => $roomId
+            'roomIds' => $formattedRoomId
         ];
 
         $rules = [
@@ -41,23 +69,38 @@ class BookingService
             'start' => 'required|date_format:Y-m-d\TH:i|before:end',
             'end' => 'required|date_format:Y-m-d\TH:i|after:start',
             'agreement' => 'required|boolean',
-            'roomId' => 'required|integer|exists:rooms,id',
+            'userId' => 'required|integer|exists:users,id',
+            'roomIds' => 'required|array',
+            'roomIds.*' => 'integer|exists:rooms,id'
         ];
 
         $this->validateBookingData($data, $rules);
 
         try {
-            DB::transaction(function () use ($data, &$bookResult) {
+            DB::transaction(function () use ($data, &$bookResult, $status) {
                 $requestDetail = [
                     'title' => $data['eventName'],
                     "description" => $data['eventDescription'],
                     "start" => $data['start'],
                     "end" => $data['end'],
-                    "status" => "pending",
-                    "user_id" => $data['userId'],
-                    "room_id" => $data['roomId']
+                    "status" => $status,
+                    "user_id" => $data['userId']
                 ];
+
                 $bookResult = RequestRoom::create($requestDetail);
+                $bookResult->rooms()->attach($data['roomIds']);
+
+                if ($status == "approved") {
+                    foreach ($data['roomIds'] as $roomId) {
+                        Calendar::create([
+                            'title' => $bookResult->title,
+                            'start' => $bookResult->start,
+                            'end' => $bookResult->end,
+                            'booking_id' => $bookResult->id,
+                            'room_id' => $roomId
+                        ]);
+                    }
+                }
             });
         } catch (\Exception $e) {
             Log::emergency("Failed to create booking: " . $e->getMessage());
@@ -66,7 +109,7 @@ class BookingService
         return $bookResult;
     }
 
-    public function editBooking($id, $eventName = null, $eventDescription = null, $start = null, $end = null, $userId = null, $roomId = null, $status = null)
+    public function editBooking($id, $eventName = null, $eventDescription = null, $start = null, $end = null, $userId = null, $roomIds = null, $status = null)
     {
         $bookResult = null;
 
@@ -77,19 +120,20 @@ class BookingService
             'start' => $start,
             'end' => $end,
             'userId' => $userId,
-            'roomId' => $roomId,
+            'roomIds' => $roomIds,
             'status' => $status
         ];
 
         $rules = [
             'id' => 'required|integer|exists:bookings,id',
-            'eventName' => 'sometimes|string|max:255',
-            'eventDescription' => 'sometimes|string|max:1000',
-            'start' => 'sometimes|date_format:Y-m-d\TH:i|before:end',
-            'end' => 'sometimes|date_format:Y-m-d\TH:i|after:start',
-            'userId' => 'sometimes|integer|exists:users,id',
-            'roomId' => 'sometimes|integer|exists:rooms,id',
-            'status' => 'sometimes|in:pending,approved,rejected,cancelled'
+            'eventName' => 'sometimes|required|string|max:255',
+            'eventDescription' => 'sometimes|required|string|max:1000',
+            'start' => 'sometimes|required|date_format:Y-m-d\TH:i|before:end',
+            'end' => 'sometimes|required|date_format:Y-m-d\TH:i|after:start',
+            'userId' => 'sometimes|required|integer|exists:users,id',
+            'roomIds' => 'sometimes|required|array',
+            'roomIds.*' => 'integer|exists:rooms,id',
+            'status' => 'sometimes|required|in:pending,approved,rejected,cancelled'
         ];
 
         $this->validateBookingData($data, $rules);
@@ -98,26 +142,26 @@ class BookingService
             DB::transaction(function () use ($data, &$bookResult) {
                 $bookResult = RequestRoom::findOrFail($data['id']);
 
-                foreach ($data as $key => $value) {
-                    if ($key != 'id') {  // Avoid changing the ID
-                        $attribute = match ($key) {
-                            'eventName' => 'title',
-                            'eventDescription' => 'description',
-                            'start' => 'start',
-                            'end' => 'end',
-                            'userId' => 'user_id',
-                            'roomId' => 'room_id',
-                            'status' => 'status',
-                            default => null
-                        };
+                $attributesToUpdate = [
+                    'title' => $data['eventName'],
+                    'description' => $data['eventDescription'],
+                    'start' => $data['start'],
+                    'end' => $data['end'],
+                    'user_id' => $data['userId'],
+                    'status' => $data['status'],
+                ];
 
-                        if ($attribute) {
-                            $bookResult->$attribute = $value;
-                        }
-                    }
+                // Filter null values from data to only update provided fields
+                $attributesToUpdate = array_filter($attributesToUpdate, function ($value) {
+                    return !is_null($value);
+                });
+
+                $bookResult->update($attributesToUpdate);
+
+                // Update rooms if provided
+                if (isset($data['roomIds'])) {
+                    $bookResult->rooms()->sync($data['roomIds']);
                 }
-
-                $bookResult->save();
             });
         } catch (ModelNotFoundException $e) {
             Log::emergency("Failed to edit booking: " . $e->getMessage());
@@ -126,60 +170,59 @@ class BookingService
         return $bookResult;
     }
 
+
     public function viewBooking($id)
     {
-        $bookResult = null;
-
-        $data = [
-            'id' => $id,
-        ];
-
-        $rules = [
-            'id' => 'required|integer|exists:bookings,id',
-        ];
-
-        $this->validateBookingData($data, $rules);
-
         try {
-            DB::transaction(function () use ($data, &$bookResult) {
-                $bookResult = RequestRoom::findOrFail($data['id']);
-                return $bookResult;
-            });
+            $booking = RequestRoom::with('rooms')->findOrFail($id);
+            return $booking;
         } catch (\Exception $e) {
-            Log::emergency("Failed to view booking: " . $e->getMessage());
+            Log::error("Failed to view booking: " . $e->getMessage());
             return null;
         }
-        return $bookResult;
     }
 
     public function listBooking()
     {
-        return RequestRoom::with('room')->where('status', 'pending')->get();
+        try {
+            $bookings = RequestRoom::with('rooms')->where('status', 'pending')->get();
+            return $bookings;
+        } catch (\Exception $e) {
+            Log::error("Failed to list bookings: " . $e->getMessage());
+            return null;
+        }
     }
 
     public function deleteBooking($id)
     {
-        $deletedCount = 0;
-
-        $data = [
-            'id' => $id,
-        ];
-
-        $rules = [
-            'id' => 'required|integer|exists:bookings,id',
-        ];
-
-        $this->validateBookingData($data, $rules);
-
         try {
-            $deletedCount = DB::transaction(function () use ($data) {
-                return RequestRoom::destroy($data['id']);
+            DB::transaction(function () use ($id) {
+                $booking = RequestRoom::findOrFail($id);
+                $booking->rooms()->detach();
+
+                Calendar::where('booking_id', $id)->delete();
+                $booking->delete();
             });
+            return true;
         } catch (\Exception $e) {
-            Log::emergency("Failed to delete booking: " . $e->getMessage());
+            Log::error("Failed to delete booking: " . $e->getMessage());
             return false;
         }
-        return $deletedCount > 0;
+    }
+
+    public function cancelBooking($id)
+    {
+        try {
+            DB::transaction(function () use ($id) {
+                $booking = RequestRoom::findOrFail($id);
+                $booking->update(['status' => 'cancelled']);
+                Calendar::where('booking_id', $id)->delete();
+            });
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Failed to cancel booking: " . $e->getMessage());
+            return false;
+        }
     }
 
 }

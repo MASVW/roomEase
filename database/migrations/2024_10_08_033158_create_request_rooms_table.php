@@ -18,11 +18,10 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->dateTime('start');
             $table->dateTime('end');
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'cancelled'])->default('pending');
             $table->timestamps();
 
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreignId('room_id')->references('id')->on('rooms')->onDelete('cascade');
         });
     }
 

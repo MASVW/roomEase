@@ -20,6 +20,7 @@ Route::middleware([
     })->name('dashboard');
 });
 
+Route::get('/rooms/{id}/download-qr', [\App\Http\Controllers\QRController::class, 'download'])->name('rooms.downloadQr');
 
 Route::get('/testing', function () {
     return view('welcome');

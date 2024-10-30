@@ -21,6 +21,7 @@ class DetailBookModal extends Component
     public $status;
     public $userNickname;
     public $requestDate;
+    public $updatedDate;
 
     public $showModal = false;
     public $roomId;
@@ -59,6 +60,7 @@ class DetailBookModal extends Component
         $this->start = $event->start;
         $this->end = $event->end;
         $this->requestDate = $event->created_at;
+        $this->updatedDate = $event->updated_at;
         $this->showModal = !$this->showModal;
     }
 

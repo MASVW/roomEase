@@ -33,6 +33,7 @@ class Dashboard extends \Filament\Pages\Dashboard
     {
         $this->data = $this->service->calendar->refreshDataCalendarHasApproved();
         $this->listBooking = $this->formattingToStringWithDuration($this->service->booking->listBooking());
+//        dd($this->listBooking);
     }
 
 

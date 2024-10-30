@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class RequestRoom extends Model
 {
@@ -33,9 +34,9 @@ class RequestRoom extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function room(): BelongsTo
+    public function rooms(): BelongsToMany
     {
-        return $this->belongsTo(Room::class);
+        return $this->belongsToMany(Room::class, 'booking_room', 'booking_id', 'room_id');
     }
 
 

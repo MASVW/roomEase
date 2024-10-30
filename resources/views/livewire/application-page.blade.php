@@ -31,18 +31,33 @@
                                 </p>
                             </div>
                             <div class="flex items-center text-center">
-                                <p class="text-sm sm:text-base">{{ $application->room->name }}</p>
+                                    <p class="text-sm sm:text-base">
+                                        @foreach ($application->rooms as $room)
+                                             <span> {{ $room->name }}</span>
+                                        @endforeach
+                                    </p>
                             </div>
                             <div class="flex items-center text-left capitalize flex justify-between">
-                                <p class="text-sm sm:text-base">{{ $application->status }}</p>
-
+                                @if($application->status == 'approved')
+                                    <p class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300 capitalize">{{$application->status}}</p>
+                                @elseif($application->status == 'rejected')
+                                    <p class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300 capitalize">{{$application->status}}</p>
+                                @else
+                                    <p class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300 capitalize">{{$application->status}}</p>
+                                @endif
                                 <div class="flex gap-x-5">
-                                    <div wire:click.stop="editBooking({{ $application->id }})"  class="text-gray-500 hover:text-gray-600 active:text-gray-800 w-5 h-5">
-                                        <x-eva-edit />
-                                    </div>
-                                    <div wire:click.stop="delete({{ $application->id }})" class="text-gray-500 hover:text-gray-600 active:text-gray-800 w-5 h-5">
-                                        <x-heroicon-s-trash />
-                                    </div>
+                                    @if($application->status == "pending")
+                                        <div wire:click.stop="editBooking({{ $application->id }})"  class="text-gray-500 hover:text-gray-600 active:text-gray-800 w-5 h-5">
+                                            <x-eva-edit />
+                                        </div>
+                                        <div wire:click.stop="showModalConfirmDeletion({{ $application->id  }})" class="text-gray-500 hover:text-gray-600 active:text-gray-800 w-5 h-5">
+                                            <x-heroicon-s-trash />
+                                        </div>
+                                    @elseif($application->status == "approved")
+                                        <div wire:click.stop="showModalConfirmCancel({{ $application->id  }})" class="text-gray-500 hover:text-gray-600 active:text-gray-800 w-5 h-5">
+                                            <x-gmdi-cancel />
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -150,15 +165,137 @@
                                     <p class="mt-1 text-xs text-red-600">@error('agreement') {{ $message }} @enderror</p>
                                 </div>
                             </div>
-
-
-
                             <div class="w-full flex justify-end">
                                 <button type="submit" class="text-white inline-flex items-center bg-sky-700 hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                     Submit
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+    @if($modalDeletion)
+        <div x-data="{ open: @entangle('modalDeletion').live }" x-show="open" class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <!-- Button untuk membuka modal -->
+            <button @click="open = true" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                Open Modal
+            </button>
+
+            <!-- Background backdrop -->
+            <div
+                x-show="open"
+                class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                aria-hidden="true">
+            </div>
+
+            <!-- Modal -->
+            <div
+                x-data="{bookId: '{{$bookIdSelected}}'}"
+                x-show="open"
+                @keydown.escape.window="$wire.showModalConfirmDeletion('{{$bookIdSelected}}')"
+                class="fixed inset-0 z-10 w-screen overflow-y-auto"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                            <div class="sm:flex sm:items-start">
+                                <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                    <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                                    </svg>
+                                </div>
+                                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                    <h3 class="text-base font-semibold text-gray-900" id="modal-title">Confirm Deletion</h3>
+                                    <div class="mt-2">
+                                        <p class="text-sm text-gray-500">Are you sure you want to delete your room booking? This action cannot be undone.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                            <button type="button" @click="$wire.delete(bookId)" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">
+                                Delete
+                            </button>
+                            <button type="button" @click="$wire.showModalConfirmDeletion('{{$bookIdSelected}}')" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+    @if($modalCancel)
+        <div x-data="{ open: @entangle('modalCancel').live }" x-show="open" class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <!-- Button untuk membuka modal -->
+            <button @click="open = true" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                Open Modal
+            </button>
+
+            <!-- Background backdrop -->
+            <div
+                x-show="open"
+                class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                aria-hidden="true">
+            </div>
+
+            <!-- Modal -->
+            <div
+                x-data="{bookId: '{{$bookIdSelected}}'}"
+                x-show="open"
+                @keydown.escape.window="$wire.showModalConfirmDeletion('{{$bookIdSelected}}')"
+                class="fixed inset-0 z-10 w-screen overflow-y-auto"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                            <div class="sm:flex sm:items-start">
+                                <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                    <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                                    </svg>
+                                </div>
+                                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                    <h3 class="text-base font-semibold text-gray-900" id="modal-title">Confirm Cancellation</h3>
+                                    <div class="mt-2">
+                                        <p class="text-sm text-gray-500">By canceling, you may lose your deposit and future booking privileges.
+                                            Are you sure you want to proceed with canceling your booking?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                            <button type="button" @click="$wire.cancelBooking(bookId)" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">
+                                Confirm Cancellation
+                            </button>
+                            <button type="button" @click="$wire.showModalConfirmDeletion('{{$bookIdSelected}}')" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
