@@ -7,21 +7,5 @@ Route::middleware('auth')->group( function () {
     Route::get('/how-to-book', \App\Livewire\HowToBookPage::class)->name('howToBook');
     Route::get('/application/{id}', \App\Livewire\ApplicationPage::class)->name('application');
     Route::get('/detail-room/{id}', \App\Livewire\DetailRoom::class)->name('detail-room');
-});
-
-
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-});
-
-Route::get('/rooms/{id}/download-qr', [\App\Http\Controllers\QRController::class, 'download'])->name('rooms.downloadQr');
-
-Route::get('/testing', function () {
-    return view('welcome');
+    Route::get('/room/category/{categoryName}', \App\Livewire\ViewRoomPage::class)->name('view-room');
 });

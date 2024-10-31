@@ -9,7 +9,7 @@
         <div class="space-y-4">
             <div class="mt-4 sm:items-center sm:gap-4 sm:flex">
                 <p class="text-2xl font-extrabold text-gray-900 sm:text-3xl">
-                    ROOM {{$selectedRoom->name}}
+                    {{$selectedRoom->name}} ROOM
                 </p>
             </div>
             <div>
@@ -24,7 +24,7 @@
                 @else
                     <div class="space-y-1">
                     @foreach($upcomingEvent as $event)
-                        <p class="capitalize">{{$this->formattedDate($event->start)}} - {{$event->booking->user->name}}, {{$event->event_title}}</p>
+                        <p class="capitalize">{{$this->formattedDate($event->start)}} - {{$event->booking->user->nickname}}, {{$event->title}}</p>
                     @endforeach
                     </div>
                 @endif

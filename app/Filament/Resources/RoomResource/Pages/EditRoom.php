@@ -53,6 +53,12 @@ class EditRoom extends EditRecord
                                     ->maxValue(1000)
                                     ->suffix('People')
                                     ->placeholder('Enter room capacity'),
+
+                                Select::make('room_categories')
+                                    ->relationship('roomCategories', 'name')
+                                    ->multiple()
+                                    ->preload()
+                                    ->required()
                             ]),
                     ]),
 

@@ -1,6 +1,15 @@
-<section class="py-36 antialiased md:py-4 h-screen">
-    <div class="mx-auto h-full max-w-screen-xl px-4 2xl:px-0 flex items-center">
-        <div class="w-full min-h-[35rem] md:min-h-[40rem] max-h-[50rem] -translate-y-5 bg-white rounded-lg shadow-md overflow-hidden">
+<section class="py-36 antialiased md:py-4 h-full mb-20">
+    <div class="py-8 antialiased">
+        <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+            <div>
+                <livewire:heading-navigation-component categoryName="My Application" />
+            </div>
+        </div>
+    </div>
+    <div class="mx-auto h-full max-w-screen-xl px-4 2xl:px-0 flex">
+
+
+        <div class="w-full min-h-[35rem] md:min-h-[40rem] max-h-[50rem] bg-white rounded-lg shadow-md overflow-hidden">
             <div class="space-y-3 py-10 px-6 sm:px-10">
                 <div class="text-2xl sm:text-3xl">
                     Application

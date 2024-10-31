@@ -8,22 +8,24 @@
                 </div>
                 <div class="h-full">
                     <p class="max-w-2xl font-light text-gray-500 md:text-lg lg:text-xl">
-                        Arya Duta Hotel 1<sup>st</sup> Floor
+                        {{$buildingName}} {{$floor}}<sup{{$this->ordinalSuffix($floor)}}</sup> Floor
                     </p>
                 </div>
             </div>
             <div class="my-4">
                 <h1 class="text-xl">Room specification</h1>
-                <ul>
-                    <li class="w-4 h-4">
-                        <x-untitledui-check-circle />
-                    </li>
-                </ul>
+                {{$selectedRoom->facilities}}
             </div>
             <livewire:modal-button />
         </div>
         <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
-            <img src="../img/1.jpg" class="rounded-lg max-h-sm" alt="">
+            @if(is_null($selectedRoom->img))
+                <iframe class="w-full h-32 sm:h-40 md:h-48 object-cover"
+                        src="https://lottie.host/embed/a4c3be28-903f-4676-8d2c-bc59f082e444/uTFX8nrs58.json">
+                </iframe>
+            @else
+                <img src="{{$selectedRoom->img}}" class="rounded-lg max-h-sm" alt="">
+            @endif
         </div>
     </div>
 </section>

@@ -32,7 +32,7 @@ class EventService
             ->first();
 
         if ($currentBooking) {
-            return "Ongoing Event : " . $currentBooking->event_title;
+            return "Ongoing Event : " . $currentBooking->title;
         }
 
         return "No Ongoing Events";

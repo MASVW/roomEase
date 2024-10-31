@@ -23,7 +23,11 @@ class RoomResource extends Resource
 
     protected static ?string $activeNavigationIcon = 'gmdi-room-preferences-r';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Room Management';
+    protected static ?int $navigationSort = 2;
+    protected static ?string $modelLabel = 'Room';
+    protected static ?string $pluralModelLabel = 'Room';
+
 
     public static function form(Form $form): Form
     {

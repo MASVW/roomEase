@@ -4,6 +4,7 @@
             <div class="col-span-7" id="calendar" wire:ignore></div>
         </div>
     </div>
+    <livewire:detail-book-modal :roomId=$roomId />
 </section>
 
 
@@ -33,7 +34,6 @@
                     }
                 }(),
                 windowResize: function(view) {
-                    // Adjust view settings based on the new window size
                     if (window.innerWidth < 768) {
                         calendar.changeView('listWeek');
                     } else if (window.innerWidth >= 768 && window.innerWidth < 1024) {
@@ -52,19 +52,12 @@
                     today: 'Today',
                     day: 'Day'
                 },
-                selectAllow: function(selectInfo) {
-                    var startTime = '09:00';
-                    var endTime = '21:00';
-                    var startHour = parseFloat(selectInfo.startStr.split('T')[1].substring(0, 5).replace(':', '.'));
-                    var endHour = parseFloat(selectInfo.endStr.split('T')[1].substring(0, 5).replace(':', '.'));
-                    return startHour >= parseFloat(startTime.replace(':', '.')) && endHour <= parseFloat(endTime.replace(':', '.'));
-                },
                 navLinks: true,
                 selectable: true,
                 selectOverlap: true,
                 unselectAuto: true,
                 select: function(info) {
-                    Livewire.emit('dateSelected', info);
+                    Livewire.dispatch('dateSelected', info);
                 },
                 businessHours: {
                     daysOfWeek: [0, 1, 2, 3, 4, 5, 6],
@@ -72,11 +65,7 @@
                     endTime: '21:00',
                 },
                 eventClick: function(info) {
-                    alert('Event: ' + info.event.title);
-                    alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
-                    alert('View: ' + info.view.type);
-
-                    info.el.style.borderColor = 'red';
+                    Livewire.dispatch('eventSelected', {data: info});
                 }
             });
             calendar.render();

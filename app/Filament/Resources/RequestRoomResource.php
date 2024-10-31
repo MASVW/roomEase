@@ -30,7 +30,11 @@ class RequestRoomResource extends Resource
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-document';
 
-    protected static ?int $navigationSort = 4;
+
+    protected static ?string $navigationGroup = 'Reservation Management';
+    protected static ?int $navigationSort = 1;
+    protected static ?string $modelLabel = 'Request Management';
+    protected static ?string $pluralModelLabel = 'Request';
 
     public static function canDelete(Model $record): bool
     {
@@ -77,6 +81,7 @@ class RequestRoomResource extends Resource
                         'BEM', 'HMPSA', 'HMPSM'=> 'warning',
                         default => 'gray'
                     })->sortable()
+                    ->searchable()
                     ->alignCenter(),
                 Tables\Columns\TextColumn::make('end')
                     ->label('Event Scheduled')

@@ -6,29 +6,34 @@ use App\Models\Calendar;
 use App\Models\Room;
 use App\Service\CalendarService;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class HomePage extends Component
 {
-    public $room;
-    //TODO: Creating Title For Page
     public $title;
     public $data;
+    #[Url(history: true)]
+    public $search = '';
 
-    protected $service;
-    public function __construct()
+    protected CalendarService $service;
+
+    public function boot(CalendarService $service)
     {
-        $this->service = app(CalendarService::class);
+        $this->service = $service;
     }
+
     public function mount(): void
     {
-        $this->room = $this->initDataRoom();
         $this->data = $this->service->refreshDataCalendarHasApproved();
     }
-    public function initDataRoom(): Collection
+
+    #[On('searchUpdated')]
+    public function updateSearch($search): void
     {
-        return Room::limit(12)->get();
+        $this->search = $search;
     }
+
     public function render()
     {
         return view('livewire.home-component');

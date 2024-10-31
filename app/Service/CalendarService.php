@@ -15,7 +15,7 @@ class CalendarService
     public function refreshDataCalendarHasApproved(): array
     {
         $initData = $this->initDataCalendarHasApproved();
-        return $this->storeData($initData);
+        return $this->storeDataCalendar($initData);
     }
 
     /**
@@ -64,6 +64,24 @@ class CalendarService
                 'title' => $item->title,
                 'start' => $item->start,
                 'end' => $item->end,
+                'color' => $this->getColorByStatus($item->status)
+            ];
+        }
+        return $calendar;
+    }
+
+    private function storeDataCalendar($data): array
+    {
+        $calendar = [];
+        foreach($data as $item)
+        {
+            $booking = RequestRoom::findOrFail($item->booking_id);
+            $calendar[] = [
+                'id' => $booking->id,
+                'user_id' => $booking->user_id,
+                'title' => $booking->title,
+                'start' => $booking->start,
+                'end' => $booking->end,
                 'color' => $this->getColorByStatus($item->status)
             ];
         }

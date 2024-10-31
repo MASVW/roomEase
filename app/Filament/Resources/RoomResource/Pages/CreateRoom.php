@@ -54,6 +54,12 @@ class CreateRoom extends CreateRecord
                                     ->maxValue(1000)
                                     ->suffix('People')
                                     ->placeholder('Enter room capacity'),
+
+                                Select::make('room_categories')
+                                    ->relationship('roomCategories', 'name')
+                                    ->multiple()
+                                    ->preload()
+                                    ->required(),
                             ]),
                     ]),
 
@@ -70,6 +76,7 @@ class CreateRoom extends CreateRecord
                             ])
                             ->placeholder('List the facilities available in this room')
                             ->columnSpanFull(),
+
 
                         FileUpload::make('img')
                             ->label('Room Image')

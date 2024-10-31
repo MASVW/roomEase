@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\RoomCategoriesResource\Pages;
-use App\Filament\Resources\RoomCategoriesResource\RelationManagers;
+use App\Filament\Resources\RoomHasCategoriesResource\Pages;
+use App\Filament\Resources\RoomHasCategoriesResource\RelationManagers;
 use App\Models\RoomCategories;
+use App\Models\RoomHasCategories;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,16 +14,17 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class RoomCategoriesResource extends Resource
+class RoomHasCategoriesResource extends Resource
 {
     protected static ?string $model = RoomCategories::class;
 
-    protected static ?string $navigationIcon = 'tabler-category-2';
-    protected static ?string $activeNavigationIcon = 'tabler-category-filled';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     protected static ?string $navigationGroup = 'Room Management';
-    protected static ?int $navigationSort = 1;
-    protected static ?string $modelLabel = 'Room Category';
-    protected static ?string $pluralModelLabel = 'Room Categories';
+    protected static ?string $navigationLabel = 'Category Assignment';
+    protected static ?string $modelLabel = 'Category Assignment';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
@@ -32,21 +34,10 @@ class RoomCategoriesResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('type')
-                    ->label('Category Type')
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'building' => 'Building Location',
-                        'floor' => 'Floor Level',
-                        'connection' => 'Connection Type',
-                        'style' => 'Room Style',
-                        default => $state,
-                    })
-                    ->sortable(),
-
                 Tables\Columns\TextColumn::make('name')
                     ->label('Category Name')
                     ->formatStateUsing(function (string $state, $record): string {
@@ -65,24 +56,22 @@ class RoomCategoriesResource extends Resource
                     })
                     ->searchable()
                     ->sortable(),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                Tables\Filters\SelectFilter::make('type')
-                    ->options([
-                        'building' => 'Building Location',
-                        'floor' => 'Floor Level',
-                        'connection' => 'Connection Type',
-                        'style' => 'Room Style',
-                    ]),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Category Type')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('rooms_count')
+                    ->counts('rooms')
+                    ->label('Assigned Rooms')
+                    ->alignCenter(),
+                Tables\Columns\TextColumn::make('rooms.name')
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->expandableLimitedList()
+                    ->label('Room List'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->modalHeading('Edit Room Assignment'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -101,9 +90,9 @@ class RoomCategoriesResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListRoomCategories::route('/'),
-            'create' => Pages\CreateRoomCategories::route('/create'),
-            'edit' => Pages\EditRoomCategories::route('/{record}/edit'),
+            'index' => Pages\ListRoomHasCategories::route('/'),
+            'create' => Pages\CreateRoomHasCategories::route('/create'),
+            'edit' => Pages\EditRoomHasCategories::route('/{record}/edit'),
         ];
     }
 }

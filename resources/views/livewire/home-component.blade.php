@@ -1,9 +1,12 @@
 <div>
+
     <livewire:search-section />
 
-    <livewire:header-component />
+    @if(empty($search))
+        <livewire:header-component />
+    @endif
 
-    <livewire:room-list-component :$room/>
+    <livewire:room-list-component />
 
     <livewire:calendar-component :$data />
 

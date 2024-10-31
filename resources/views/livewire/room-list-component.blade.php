@@ -2,13 +2,25 @@
     <div class="mx-auto max-w-screen-xl px-2 sm:px-4 2xl:px-0">
         <div class="mb-2 items-end justify-between space-y-2 sm:flex sm:space-y-0 md:mb-4">
             <div>
-                <h2 class="text-lg font-semibold text-gray-900 sm:text-xl md:text-2xl">Lippo Plaza</h2>
+                <h2 class="text-lg font-semibold text-gray-900 sm:text-xl md:text-2xl">
+                    @if($this->search)
+                        Search For: {{$this->search}}
+                    @elseif(is_null($categoryName))
+                        All Room At UPH Medan Campus
+                    @else
+                        Room for Categories: {{$categoryName}}
+                    @endif
+                </h2>
             </div>
+        </div>
+
+        <div class="my-10">
+            {{ $rooms->links(data: ['scrollTo' => false]) }}
         </div>
 
         <!-- Menambahkan 4 kolom pada perangkat mobile dengan responsif -->
         <div class="grid gap-2 md:gap-4 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4">
-            @foreach($room as $room)
+            @foreach($rooms as $room)
                 <a href="{{ route('detail-room', ['id' => $room->id]) }}"
                    class="cursor-pointer rounded-lg border border-gray-200 bg-white p-3 sm:p-4 md:p-6 shadow-md">
                     <div class="w-full overflow-hidden rounded-lg">
@@ -57,5 +69,8 @@
                 </a>
             @endforeach
         </div>
+       <div class="my-10">
+           {{ $rooms->links(data: ['scrollTo' => false]) }}
+       </div>
     </div>
 </section>

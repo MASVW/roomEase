@@ -27,6 +27,13 @@
                             {{ __('How To Book') }}
                         </x-nav-link>
                     </div>
+                    @hasanyrole('academic|general-affairs|student-life')
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link href="/internal" :active="request()->routeIs('howToBook')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                    </div>
+                    @endhasanyrole
                 </div>
             </div>
 

@@ -17,8 +17,10 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             UserSeeder::class,
             RoomSeeder::class,
+            RoomCategoriesSeeder::class,
+            RoomHasCategoriesSeeder::class,
             RequestRoomSeeder::class,
-            CalendarSeeder::class
+            CalendarSeeder::class,
         ]);
     }
 }
