@@ -9,10 +9,21 @@ RUN apt-get update && apt-get install -y \
     git \
     gnupg \
     nodejs \
-    npm
+    npm \
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    libwebp-dev \
+    libxpm-dev
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql zip intl
+RUN docker-php-ext-install pdo_mysql zip intl \
+    && docker-php-ext-configure gd \
+            --with-jpeg \
+            --with-freetype \
+            --with-webp \
+            --with-xpm \
+        && docker-php-ext-install gd
 
 # Enable mod_rewrite
 RUN a2enmod rewrite

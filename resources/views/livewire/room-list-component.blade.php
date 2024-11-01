@@ -30,7 +30,7 @@
                             </iframe>
                         @else
                             <img class="w-full h-32 sm:h-40 md:h-48 object-cover"
-                                 src="https://storage.googleapis.com/{{env('GOOGLE_CLOUD_STORAGE_BUCKET')}}/{{$room->img[0]}}" alt="Ruangan {{ $room->name }}" />
+                                 src="https://storage.googleapis.com/room-ease/{{$room->img[0]}}" alt="Ruangan {{ $room->name }}" />
                         @endif
                     </div>
                     <div class="pt-2 sm:pt-3 md:pt-4">
