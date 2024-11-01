@@ -19,6 +19,8 @@ class Dashboard extends \Filament\Pages\Dashboard
 
 
 
+
+
     protected static string $view = 'calendar.calendar';
 
     public function __construct()

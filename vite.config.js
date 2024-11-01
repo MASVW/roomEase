@@ -3,19 +3,23 @@ import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
     // server: {
-    //     host: '10.10.10.154', // Ganti dengan host yang diinginkan, misalnya 'localhost' atau '127.0.0.1'
-    //     port: 5713,
-    //     hmr: {
-    //         host: '10.10.10.154', // Sesuaikan dengan host di atas, misalnya 'localhost'
+    //     watch: {
+    //         usePolling: true,
     //     },
-    // }
+    //     host: '0.0.0.0',
+    //     hmr: {
+    //         host: 'localhost',
+    //         clientPort: 8080
+	//
+    //     },
+    // },
     plugins: [
         laravel({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
             ],
-            refresh: true,
+            // refresh: true,
         }),
     ],
     base: process.env.VITE_BASE_URL || '/',

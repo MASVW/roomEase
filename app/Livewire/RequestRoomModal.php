@@ -17,10 +17,11 @@ class RequestRoomModal extends Component
    public $eventName;
     #[Validate('required|string|min:10|max:3000|')]
    public $eventDescription;
-    #[Validate('required|date_format:Y-m-d\TH:i|before:end')]
+    #[Validate('required|date_format:Y-m-d\TH:i|before:end|time_range')]
     public $start;
-    #[Validate('required|date_format:Y-m-d\TH:i|after:start')]
+    #[Validate('required|date_format:Y-m-d\TH:i|after:start|time_range')]
     public $end;
+    #[Validate('required|accepted')]
     public $agreement = false;
     public $showModal = false;
     public $roomId;

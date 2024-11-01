@@ -27,6 +27,9 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
+            ->brandName('Room Ease')
+            ->brandLogo(asset('/favicon.png'))
+            ->favicon(asset('/favicon.png'))
             ->id('admin')
             ->path('/internal')
             ->login()

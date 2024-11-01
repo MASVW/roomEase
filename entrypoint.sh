@@ -7,7 +7,7 @@ cd /var/www/html
 ls -la
 
 # Jalankan migrasi dan seeding
-php artisan migrate --force --seed
+php artisan migrate:fresh --force --seed
 
 # Jalankan Apache di foreground agar container tetap aktif
 exec apache2-foreground

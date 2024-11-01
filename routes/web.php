@@ -9,3 +9,6 @@ Route::middleware('auth')->group( function () {
     Route::get('/detail-room/{id}', \App\Livewire\DetailRoom::class)->name('detail-room');
     Route::get('/room/category/{categoryName}', \App\Livewire\ViewRoomPage::class)->name('view-room');
 });
+
+Route::get('/rooms/{id}/download-qr', [\App\Http\Controllers\QRController::class, 'download'])->name('rooms.downloadQr');
+

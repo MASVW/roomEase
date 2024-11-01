@@ -35,6 +35,9 @@
                     today: 'Today',
                     day: 'Day'
                 },
+                validRange: {
+                    start: new Date().toISOString().slice(0, 10)
+                },
                 selectAllow: function(selectInfo) {
                     var startTime = '09:00';
                     var endTime = '21:00';

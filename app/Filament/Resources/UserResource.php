@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
 {
@@ -29,7 +30,41 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('name')
+                    ->label('Full Name')
+                    ->required()
+                    ->maxLength(255),
+
+                Forms\Components\TextInput::make('email')
+                    ->label('Email Address')
+                    ->email()
+                    ->unique(ignoreRecord: true)
+                    ->required()
+                    ->maxLength(255),
+
+                Forms\Components\TextInput::make('username')
+                    ->label('Username')
+                    ->unique(ignoreRecord: true)
+                    ->required()
+                    ->maxLength(255),
+
+                Forms\Components\TextInput::make('nickname')
+                    ->label('Nickname')
+                    ->maxLength(255),
+
+                Forms\Components\TextInput::make('password')
+                    ->label('Password')
+                    ->password()
+                    ->required(fn($context) => $context === 'create')
+                    ->confirmed()
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                    ->dehydrated(fn($state) => filled($state)),
+
+                Forms\Components\TextInput::make('password_confirmation')
+                    ->label('Confirm Password')
+                    ->password()
+                    ->required(fn($context) => $context === 'create')
+                    ->visibleOn('create'),
             ]);
     }
 
@@ -38,17 +73,31 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('User Name'),
+                    ->searchable()
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('email')
-                    ->label('Email'),
-                Tables\Columns\ToggleColumn::make('status')
-                    ->label('Status')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('username')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('nickname')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->hiddenLabel(),
+                Tables\Actions\DeleteAction::make()->hiddenLabel(),
             ]);
     }
 

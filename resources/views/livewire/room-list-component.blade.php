@@ -22,7 +22,7 @@
         <div class="grid gap-2 md:gap-4 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4">
             @foreach($rooms as $room)
                 <a href="{{ route('detail-room', ['id' => $room->id]) }}"
-                   class="cursor-pointer rounded-lg border border-gray-200 bg-white p-3 sm:p-4 md:p-6 shadow-md">
+                   class="block cursor-pointer rounded-lg border border-gray-200 bg-white p-3 sm:p-4 md:p-6 shadow-md">
                     <div class="w-full overflow-hidden rounded-lg">
                         @if(is_null($room->img))
                             <iframe class="w-full h-32 sm:h-40 md:h-48 object-cover"
@@ -30,7 +30,7 @@
                             </iframe>
                         @else
                             <img class="w-full h-32 sm:h-40 md:h-48 object-cover"
-                                 src="{{$room->img}}" alt="Ruangan {{$room->name}}" />
+                                 src="https://storage.googleapis.com/{{env('GOOGLE_CLOUD_STORAGE_BUCKET')}}/{{$room->img[0]}}" alt="Ruangan {{ $room->name }}" />
                         @endif
                     </div>
                     <div class="pt-2 sm:pt-3 md:pt-4">

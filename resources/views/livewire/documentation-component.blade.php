@@ -28,9 +28,9 @@
                 <div id="default-carousel" class="relative w-full" data-carousel="slide">
                     <!-- Carousel wrapper -->
                     <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
-                        @foreach($room as $item)
+                        @foreach($room as $index => $item)
                             <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                                <img src="img/1.jpg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="{{ $item->name }}">
+                                <img src="img/{{ $index + 1 }}.jpg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="{{ $item->name }}">
                             </div>
                         @endforeach
                     </div>

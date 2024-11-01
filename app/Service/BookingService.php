@@ -66,8 +66,8 @@ class BookingService
         $rules = [
             'eventName' => 'required|string|max:255',
             'eventDescription' => 'required|string|max:1000',
-            'start' => 'required|date_format:Y-m-d\TH:i|before:end',
-            'end' => 'required|date_format:Y-m-d\TH:i|after:start',
+            'start' => 'required|date_format:Y-m-d\TH:i|before:end|time_range',
+            'end' => 'required|date_format:Y-m-d\TH:i|after:start|time_range',
             'agreement' => 'required|boolean',
             'userId' => 'required|integer|exists:users,id',
             'roomIds' => 'required|array',

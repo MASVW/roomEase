@@ -1,2 +1,4 @@
 vendor/
 .env
+public/hot
+cors.json

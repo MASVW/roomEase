@@ -1,7 +1,7 @@
 <section class="py-36 antialiased md:py-4 h-full mb-20">
     <div class="py-8 antialiased">
         <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
-            <div>
+            <div wire:ignore>
                 <livewire:heading-navigation-component categoryName="My Application" />
             </div>
         </div>
@@ -42,7 +42,7 @@
                             <div class="flex items-center text-center">
                                     <p class="text-sm sm:text-base">
                                         @foreach ($application->rooms as $room)
-                                             <span> {{ $room->name }}</span>
+                                             <a class="hover:underline decoration-sky-700" href="/detail-room/{{$room->id}}"> {{ $room->name }}</a>
                                         @endforeach
                                     </p>
                             </div>
@@ -301,7 +301,7 @@
                             <button type="button" @click="$wire.cancelBooking(bookId)" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">
                                 Confirm Cancellation
                             </button>
-                            <button type="button" @click="$wire.showModalConfirmDeletion('{{$bookIdSelected}}')" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                            <button type="button" @click="$wire.showModalConfirmCancel('{{$bookIdSelected}}')" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
                                 Cancel
                             </button>
                         </div>

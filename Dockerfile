@@ -44,7 +44,7 @@ RUN composer install
 RUN php -r "file_exists('.env') || copy('.env.production', '.env');"
 
 # Install Node.js dependencies using npm
-RUN npm install && npm run build
+RUN npm ci && npm run build
 
 RUN mv /var/www/html/public/build/.vite/manifest.json /var/www/html/public/build/manifest.json
 
@@ -55,11 +55,11 @@ RUN find storage -type d -exec chmod 777 {} \; && \
 RUN php artisan storage:link && \
     ln -s /var/www/html/public/build /var/www/html/build
 # 12. Optimasi konfigurasi Laravel
-RUN php artisan key:generate --ansi --force && \
-    php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache && \
-    php artisan optimize
+RUN php -d memory_limit=-1 artisan key:generate --ansi --force && \
+    php -d memory_limit=-1 artisan config:cache && \
+    php -d memory_limit=-1 artisan route:cache && \
+    php -d memory_limit=-1 artisan view:cache && \
+    php -d memory_limit=-1 artisan optimize
 
 # 13. Expose port untuk Cloud Run
 EXPOSE ${PORT}
@@ -68,5 +68,7 @@ EXPOSE ${PORT}
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# 15. Jalankan aplikasi dengan entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+# 15. Jalankan aplikasi dengan entrypoint, for seeding
+#ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["apache2-foreground"]

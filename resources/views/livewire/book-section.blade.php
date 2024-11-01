@@ -36,18 +36,5 @@
         </div>
 
         <hr class="my-6 md:my-8 border-gray-200" />
-
-
-{{--        <p class="mb-6 text-gray-500">--}}
-{{--            Studio quality three mic array for crystal clear calls and voice--}}
-{{--            recordings. Six-speaker sound system for a remarkably robust and--}}
-{{--            high-quality audio experience. Up to 256GB of ultrafast SSD storage.--}}
-{{--        </p>--}}
-
-{{--        <p class="text-gray-500">--}}
-{{--            Two Thunderbolt USB 4 ports and up to two USB 3 ports. Ultrafast--}}
-{{--            Wi-Fi 6 and Bluetooth 5.0 wireless. Color matched Magic Mouse with--}}
-{{--            Magic Keyboard or Magic Keyboard with Touch ID.--}}
-{{--        </p>--}}
     </div>
 </div>
