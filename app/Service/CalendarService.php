@@ -82,11 +82,16 @@ class CalendarService
                 'title' => $booking->title,
                 'start' => $booking->start,
                 'end' => $booking->end,
-                'color' => $this->getColorByStatus($item->status)
+                'color' => $this->getColorByStatus($booking->status)
             ];
         }
         return $calendar;
     }
+
+    /**
+     * @param $status
+     * @return string
+     */
     private function getColorByStatus($status)
     {
         switch ($status) {

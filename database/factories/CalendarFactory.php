@@ -27,7 +27,7 @@ class CalendarFactory extends Factory
         $endTime = $startTime->copy()->addDays(5);
         return [
             "booking_id" => rand(1,10),
-            "event_title" => $this->faker->word(),
+            "title" => $this->faker->word(),
             "start" => $startTime,
             "end" => $endTime,
             "room_id" => rand(1,40)

@@ -12,8 +12,15 @@ use Illuminate\Support\Facades\Validator;
 use PHPUnit\Exception;
 use Tests\TestCase;
 
+
 class BookingService
 {
+    /**
+     * @param $data
+     * @param $rules
+     * @return void
+     * @throws \Exception
+     */
     protected function validateBookingData($data, $rules)
     {
         $validator = Validator::make($data, $rules);
@@ -47,6 +54,17 @@ class BookingService
         return $input;
     }
 
+    /**
+     * @param $eventName
+     * @param $eventDescription
+     * @param $start
+     * @param $end
+     * @param $agreement
+     * @param $userId
+     * @param $roomIds
+     * @return null
+     * @throws \Exception
+     */
     public function createBooking($eventName, $eventDescription, $start, $end, $agreement, $userId, $roomIds)
     {
         $status = $this->checkingEmail(auth()->user()->email) ? "approved" : "pending";
@@ -170,7 +188,10 @@ class BookingService
         return $bookResult;
     }
 
-
+    /**
+     * @param $id
+     * @return RequestRoom|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null
+     */
     public function viewBooking($id)
     {
         try {
@@ -193,6 +214,10 @@ class BookingService
         }
     }
 
+    /**
+     * @param $id
+     * @return bool
+     */
     public function deleteBooking($id)
     {
         try {
@@ -210,6 +235,10 @@ class BookingService
         }
     }
 
+    /**
+     * @param $id
+     * @return bool
+     */
     public function cancelBooking($id)
     {
         try {
