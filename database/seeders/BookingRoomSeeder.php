@@ -15,3 +15,5 @@ class BookingRoomSeeder extends Seeder
         //
     }
 }
+
+

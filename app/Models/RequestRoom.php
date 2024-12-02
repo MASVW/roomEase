@@ -14,7 +14,6 @@ class RequestRoom extends Model
 
     protected $table = 'bookings';
 
-
     protected $fillable = [
         'title',
         "description",
@@ -33,11 +32,8 @@ class RequestRoom extends Model
     {
         return $this->belongsTo(User::class);
     }
-
     public function rooms(): BelongsToMany
     {
         return $this->belongsToMany(Room::class, 'booking_room', 'booking_id', 'room_id');
     }
-
-
 }

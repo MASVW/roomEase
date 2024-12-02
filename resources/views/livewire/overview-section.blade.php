@@ -14,7 +14,9 @@
             </div>
             <div class="my-4">
                 <h1 class="text-xl">Room specification</h1>
-                {{$selectedRoom->facilities}}
+                <div class="prose max-w-none">
+                    {!! $selectedRoom->facilities !!}
+                </div>
             </div>
             <livewire:modal-button />
         </div>

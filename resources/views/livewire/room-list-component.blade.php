@@ -24,13 +24,13 @@
                 <a href="{{ route('detail-room', ['id' => $room->id]) }}"
                    class="block cursor-pointer rounded-lg border border-gray-200 bg-white p-3 sm:p-4 md:p-6 shadow-md">
                     <div class="w-full overflow-hidden rounded-lg">
-                        @if(is_null($room->img))
+                        @if(is_null($room->img) || $room->img == [])
                             <iframe class="w-full h-32 sm:h-40 md:h-48 object-cover"
                                     src="https://lottie.host/embed/a4c3be28-903f-4676-8d2c-bc59f082e444/uTFX8nrs58.json">
                             </iframe>
                         @else
                             <img class="w-full h-32 sm:h-40 md:h-48 object-cover"
-                                 src="https://storage.googleapis.com/room-ease/{{$room->img[0]}}" alt="Ruangan {{ $room->name }}" />
+                                 src="https://storage.googleapis.com/room-ease/{{ $room->img[0] }}" alt="Ruangan {{ $room->name }}" />
                         @endif
                     </div>
                     <div class="pt-2 sm:pt-3 md:pt-4">

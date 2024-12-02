@@ -30,11 +30,11 @@ class RequestRoomResource extends Resource
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-document';
 
-
     protected static ?string $navigationGroup = 'Reservation Management';
+
+    protected static ?string $navigationLabel = "Request Management";
     protected static ?int $navigationSort = 1;
     protected static ?string $modelLabel = 'Request Management';
-    protected static ?string $pluralModelLabel = 'Request';
 
     public static function canDelete(Model $record): bool
     {

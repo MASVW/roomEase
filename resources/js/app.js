@@ -19,7 +19,6 @@ window.multiMonthPlugin = multiMonthPlugin;
 window.interactionPlugin = interactionPlugin;
 window.Datepicker = Datepicker;
 
-// window.DotLottie = DotLottie;
 window.lottie = lottie;
 
 
